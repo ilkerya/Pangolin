@@ -174,28 +174,26 @@ void testdrawchar(void) {
   display.display();
  // delay(2000);
 }
-
+/*
 void SDcard_Info(){
-            if(SDCard.Status = SD1_TYPE){
-            display.print("SD1 ");display.print(SD_Volume);display.print("Gb"); // 4+5+2 = 11
-            }
-          else if(SDCard.Status = SD2_TYPE){
-            display.print("SD2 ");display.print(SD_Volume);display.print("Gb");
-            } 
-          else if(SDCard.Status = SDHC_TYPE){
-            display.print("SDH ");display.print(SD_Volume);display.print("Gb");
-           } 
+       if(SDCard.Status = SD1_TYPE)Display_Line2 = "SD1 ";         
+       else if(SDCard.Status = SD2_TYPE)Display_Line2 = "SD2 ";           
+       else if(SDCard.Status = SDHC_TYPE)Display_Line2 = "SDH ";
+       Display_Line2 += String(SD_Volume) + "Gb" ;            
 }
-
+*/
 void SDCard_or_File(){
     switch(DisplayValueTimer){
-      case 0:case 2:     
-          SDcard_Info();
-         break;
-         case 1:case 3: 
-           //display.print("File ");
-           display.print(LOG_FILE); //10
-           display.print(' '); //1
+      case 0:
+      case 2:     
+           if(SDCard.Status = SD1_TYPE)      Display_Line2 = "SD1 ";         
+           else if(SDCard.Status = SD2_TYPE) Display_Line2 = "SD2 ";           
+           else if(SDCard.Status = SDHC_TYPE)Display_Line2 = "SDH ";
+           Display_Line2 += String(SD_Volume) + "Gb" ; 
+      break;
+         case 1:
+         case 3: 
+           Display_Line2 = String(LOG_FILE) + ' ';
          break;
          default:
          break;  
@@ -204,81 +202,29 @@ void SDCard_or_File(){
 
 
 void ShowLogTime(){
-      String DispSample="";
+    Display_Line2 += "    ";
+    //  String DispSample="";
       switch(SampleTime){
-       case TASK_500MSEC:DispSample = "0.5Sec"; //5 
+       case TASK_500MSEC:Display_Line2 += "0.5Sec"; //5 
           break;        
-        case TASK_1SEC : DispSample = "  1Sec";//5
+        case TASK_1SEC : Display_Line2 += "  1Sec";//5
           break; 
-        case TASK_2SEC : DispSample = "  2Sec";
+        case TASK_2SEC : Display_Line2 += "  2Sec";
           break;        
-        case TASK_5SEC : DispSample = "  5Sec";
+        case TASK_5SEC : Display_Line2 += "  5Sec";
           break;  
-        case TASK_10SEC :DispSample = " 10Sec";
+        case TASK_10SEC :Display_Line2 += " 10Sec";
           break; 
-        case TASK_20SEC :DispSample = " 20Sec";
+        case TASK_20SEC :Display_Line2 += " 20Sec";
           break;            
-        case TASK_60SEC :DispSample = " 60Sec";
+        case TASK_60SEC :Display_Line2 += " 60Sec";
           break;     
       }  
-      display.print("    ");      //4 
-      display.print(DispSample); 
 }
 
-void displayValues(void)
-{
-  if(DisplayInitDelay == OFF)return;
-
-  //testdrawchar();
-  //return;
-  
-  display.clearDisplay();
-  display.setTextSize(1);
-     display.setCursor(0, 1);
-/*  
-   display.setCursor(0, 1);
-    display.print(Str_Time); 
-    display.print(' ');    
-    display.println(Str_Date);   
-*/
-      display.print(Str_Date);   //10
-      display.print("   ");
-      display.println(Str_Time);     //8
-            
 
 
-    
-    if(SDCard.Status != SD_NOT_Present){
-    //   if (SDCard.LogStatus)SDCard_or_File(); 
-    //   else SDcard_Info();
-       SDCard_or_File();           
-    }
-    else //display.print("Can't Read!");//11
-           display.print("SD problem!");//11
-
-/*
-      switch(SDCard.Status){
-
-        case 1 :display.print("SD1 ");display.print(SD_Volume);display.print("Gb ");//ShowLogTime(); //4+5+3+9 = 21
-        break;
-        case 2 :display.print("SD2 ");display.print(SD_Volume);display.print("Gb ");//ShowLogTime(); //74+5+3+9 = 21
-        break;
-        case 3 :display.print("SDH ");display.print(SD_Volume);display.print("Gb ");//ShowLogTime();//4+5+3+9 = 21
-        break; 
-         case 0 ://display.print("No Card  Reset 2 Run ");// 21  SD_NOT_Present
-                  //display.print("Can't Read!     Reset");// 21
-        //break;
-        default://display.print("Unknown Problem !");   
-                 // display.print("Can't Read!     Reset");// 21 
-                  display.print("Can't Read! ");// 21   
-         break;
-     } 
-*/
-      
-    ShowLogTime();
-    display.println();
-    unsigned long Remain;
-     unsigned long   Remain2;
+  /*
    display.print(' ');
     if( FileSize.Total) {
       if(FileSize.Total < 100000000)display.print(' ');   // 100 Mb     
@@ -323,37 +269,119 @@ void displayValues(void)
       display.print(Remain);  // 9 digit 
     }
     else display.print(FileSize.Total); // less than 1000
-
-
-      
-               
+            
   //    display.print(FileSize.Total);  // 9 digit 
       display.print(" Bytes"); //6 digit  total 15
     }
     else display.print("                    ");
-
-
-     
-   /*
-    if(SDCard.Status != SD_NOT_Present){
-      if (SDCard.LogStatus){
-       // display.print("File ");
-        display.print(LOG_FILE_SHORT);  //6  21-6 = 15 14 //      123456789 Byte
-        display.print(FileSize);
-        display.print(" Byte");
-      }
-      else //display.print("LOG OFF Sample:");//15
-          display.print("      Log. Off       ");//21        
-    }
-    else  display.print("                     ");//21
-    */
-
     display.println();
-     //4th line
-   // DisplayFullSensors();
+*/
+void SizeOffSD(){
+    String str;
+     unsigned long Remain;
+     unsigned long   Remain2;
+
+    str = ' ';
+    if( FileSize.Total == 0) str += "                    ";//20 
+    
+      if(FileSize.Total < 100000000)str += ' ';   // 100 Mb     
+      if(FileSize.Total < 10000000)str += ' ';   // 10 Mb
+      
+      if(FileSize.Total < 1000000)str += ' ';   // 1 Mb
+      if(FileSize.Total < 100000)str += ' ';   // 100 kb
+      if(FileSize.Total < 10000)str += ' ';   // 10 kb
+      
+      if(FileSize.Total < 1000)str += ' ';   // 1 kb
+      if(FileSize.Total < 100)str += ' ';   // 100 byte
+      if(FileSize.Total < 10)str += ' ';   // 10  byte  
+
+      if(FileSize.Total >= 1000000){     
+        str += String(FileSize.Total / 1000000);  // 9 digit 
+        str +='.';  // 9 digit 
+        Remain = FileSize.Total % 1000000;        
+        if(Remain < 100000)str += ' '; //  _50000
+        if(Remain < 10000)str += ' ';  //  __5000
+        if(Remain < 1000)str += ' ';  //  ___500
+      
+        if(Remain  >= 1000){
+          Remain2 = Remain % 1000;
+          str += String(Remain / 1000);  // 9 digit 
+          str +='.';   // 9 digit
+          if(Remain2 < 100)str += '0';
+          if(Remain2 < 10)str += '0';
+          str += String(Remain2);  // 9 digit       
+        }  
+      }
+      else if(FileSize.Total >= 1000){
+        Remain = FileSize.Total % 1000;
+        str += String(FileSize.Total / 1000);  // 9 digit 
+        str +='.';   // 9 digit 
+        if(Remain < 100)str += '0';
+        if(Remain < 10)str += '0';
+        str += String(Remain);  // 9 digit 
+      }
+      else str += String(FileSize.Total); // less than 1000 
+             
+      str += String(" Bytes   "); //9 digit  total 15   
+      Display_Line3 = str;
+}
+
+void UpdateDisplayBuffer(void){
+    String *str;
+    Display_Line1 = String(Str_Date) + "   " + String(Str_Time);
+    
+    if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
+    else Display_Line2 = "SD problem!";
+    ShowLogTime();
+
+    SizeOffSD();
+
     DisplayTestDevices();
+    // DisplayFullSensors();
   
-    display.setCursor(0, 57);
+}
+
+void displayValues(void)
+{
+  UpdateDisplayBuffer();
+  if(DisplayInitDelay == OFF)return;
+
+  //testdrawchar();
+  //return;
+
+    display.clearDisplay();
+    display.setTextSize(1);
+
+    display.setCursor(0, 0);
+    display.print(Display_Line1);   //10
+
+    display.setCursor(0, 8);
+    display.print(Display_Line2);   //10
+  
+    display.setCursor(0, 16);
+    display.print(Display_Line3);   //10 
+
+    display.setCursor(0, 24);
+    display.print(Display_Line4);   //10 
+
+    display.setCursor(0, 32);
+    display.print(Display_Line5);   //10 
+
+     display.setCursor(24, 32); //x,y  6*4 = 24
+    display.write(247); // 5th character  '°';   
+    display.setCursor(90, 32); //x,y  6*15 = 90
+    display.write(247); // 5th character  '°';   
+     
+    display.setCursor(0, 40);
+    display.print(Display_Line6);   //10 
+
+    display.setCursor(24, 40); //x,y
+    display.write(247); // 5th character  '°';    
+ 
+     display.setCursor(0, 48);
+     display.print(Display_Line7);   //10 
+ 
+    display.setCursor(0, 56); // 8th line
     DisplayMenu();
 
    display.display();
@@ -455,13 +483,79 @@ void DisplayFullSensors(void){
 }
 
 void DisplayTestDevices(void){
-   //  display.print("");
-/*
-     display.print(Current_Mains_Raw); //7     
 
-     display.print(" ");
-     display.print(Mains_Volt_Raw); //7  
-*/
+    String str;
+    str += " " + String(Mains_Volt) + "V ";
+    str += String(Current_Mains_Rms) + "A ";   
+
+    Display_Line4 = str;
+  
+    
+    str = "";
+    if (!isnan(Values.TemperatureSi072_Ch1)) {
+          str += String(Values.TemperatureSi072_Ch1,1);
+          str += "'C";  
+         //  str += '/247';  
+         //  str += '°';                          
+          //display.write(247);
+        //  str +="C"; 
+    }
+    else  str += "------";  
+       
+   if (!isnan(Values.Humidity_Ch1)) {
+    str +=" %";
+    str += String((int)Values.Humidity_Ch1); // 
+   }
+    else   str +="----";  
+
+    str +=" ";
+
+
+    if (!isnan(Values.TemperatureSi072_Ch2)) {
+          str += String(Values.TemperatureSi072_Ch2,1);
+           str += "'C";                      
+          //display.write(247);
+        //  str += '°'; 
+        //  str +="C"; 
+    }
+    else  str += "------";  
+       
+   if (!isnan(Values.Humidity_Ch2)) {
+    str +=" %";
+    str += String((int)Values.Humidity_Ch2); // 
+   }
+    else   str +="----";  
+
+    
+    Display_Line5 = str;
+
+    str = "";
+
+    if (!isnan(Values.TemperatureSi072_Ch3)) {
+          str += String(Values.TemperatureSi072_Ch3,1);
+          str += "'C";    
+     // str += '\°'; 
+         // str += '/247';   olmaz             
+          //display.write(247);
+      //    str +="C"; 
+    }
+    else  str += "------";  
+       
+   if (!isnan(Values.Humidity_Ch3)) {
+    str +=" %";
+    str += String((int)Values.Humidity_Ch3); // 
+   }
+    else   str +="----";  
+    
+
+    str += " "; // 
+    str += "PM2.5 ";
+    if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
+    else str += String(Values.PM25,0);
+
+    Display_Line6 = str;
+
+/*
      display.print(" ");
      display.print(Mains_Volt); //7 
      display.print("V ");
@@ -469,10 +563,7 @@ void DisplayTestDevices(void){
      display.print(Current_Mains_Rms); //7  
      display.println("A");
 
-   //  display.println(" Ia");
 
-     
-  // display.print("1:"); 
     if (!isnan(Values.TemperatureSi072_Ch1)) {
           display.print(Values.TemperatureSi072_Ch1,1);                    
           display.write(247);display.print("C"); 
@@ -523,31 +614,37 @@ void DisplayTestDevices(void){
     if(Values.PM25 < 100.00)display.println(Values.PM25,1);
     else display.println(Values.PM25,0);
       
-    
+    */
     //
 
     
     
   //  display.println(deBugString); // 
-
+    str = "";
     switch(DisplayValueTimer){
       case 0:     
-          display.print("Dev Id:  "); // 
-          display.print(EE_Id_EString); //
+        //  display.print("Dev Id:  "); // 
+       //   display.print(EE_Id_EString); //
+          str += "Dev Id:  " + EE_Id_EString;
          break;
          case 1:
-          display.print("1.   "); // SI072_FIRST_SENSOR
-          display.println(Sensor1_Id);
+      //    display.print("1.   "); // SI072_FIRST_SENSOR
+     //     display.println(Sensor1_Id);
+          str += "1.   " + Sensor1_Id;
          break;
          case 2:
-          display.print("2.   "); // SI072_SECOND_SENSOR
-          display.println(Sensor2_Id);
+    //      display.print("2.   "); // SI072_SECOND_SENSOR
+    //      display.println(Sensor2_Id);
+          str += "2.   " + Sensor2_Id;
          break;
          case 3:        
-            display.print("3.   "); // SI072_THIRD_SENSOR
-            display.println(Sensor3_Id);
+    //        display.print("3.   "); // SI072_THIRD_SENSOR
+     //       display.println(Sensor3_Id);
+            str += "3.   " + Sensor3_Id;
          break;
          default:
          break;  
-    }      
+    }  
+
+          Display_Line7 = str;
 }

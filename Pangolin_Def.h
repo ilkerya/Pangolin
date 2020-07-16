@@ -3,6 +3,8 @@
 // C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries
 // Location of Main Librarires
 
+// Set Origin
+//   git remote add origin git@github.com:ilkerya/Pangolin.git
 //  https://github.com/ilkerya/Pangolin
 //  https://blog.plover.com/prog/git-ff-error.html
 

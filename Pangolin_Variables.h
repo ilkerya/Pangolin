@@ -1,3 +1,5 @@
+
+// function prototypes
 void MainLoop(); 
 void Display_ReInit(byte Timer);
 void  RTC_Init();
@@ -16,6 +18,16 @@ void  SensorAcccel_GyroRead();
 void SDS_DustSensor(void);
 
 void EE_SerNoWrite2_EE(unsigned int SerialNo);
+
+// so variables
+
+String Display_Line1 ="Display.........Line1"; 
+String Display_Line2 ="Display........Line2."; 
+String Display_Line3 ="Display.......Line3.."; 
+String Display_Line4 ="Display......Line4..."; 
+String Display_Line5 ="Display.....Line5....";
+String Display_Line6 ="Display....Line6.....";
+String Display_Line7 ="Display...Line7......";
 
 byte Menu =0;
 unsigned int SerialCode =0;
