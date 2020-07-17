@@ -72,6 +72,11 @@ struct
 //bool SD_KartStop = 0;
 //int SDCardStatus = 0;
 
+bool DispExpLin8_1 =0;
+bool DispExpSens1 =0;
+bool DispExpSens2 =0;
+bool DispExpSens3 =0;
+
 
 byte KeyBoardTimeOut = 0;
 bool KeyBoardTimeOutEnb = 0;

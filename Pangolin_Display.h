@@ -294,16 +294,7 @@ void PrintDisplayBuffer(void){
     Serial.print("    Sensor3: ");Serial.print(Sensor3_Id);
 
     Serial.println();   
-    Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__);
-
-// The string in Flash
-Serial.print( F("Compiled: ");
-Serial.print( F(__DATE__));
-Serial.print( F(", "));
-Serial.print( F(__TIME__));
-Serial.print( F(", "));
-Serial.println( F(__VERSION__));
-    
+    Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__); 
 
     Serial.println();
     Serial.println();
@@ -349,28 +340,39 @@ void displayValues(void)
     display.setCursor(0, 32);
     display.print(Display_Line5);   //10 
 
-    display.setCursor(24, 32); //x,y  6*4 = 24
-    display.write(247); // 5th character  '°';   
-    display.setCursor(90, 32); //x,y  6*15 = 90
-    display.write(247); // 5th character  '°';   
+    if(DispExpSens1){
+      DispExpSens1 = OFF;
+      display.setCursor(24, 32); //x,y  6*4 = 24
+      display.write(247); // 5th character  '°';   
+    }
+    if(DispExpSens2){
+      DispExpSens2 = OFF;
+      display.setCursor(90, 32); //x,y  6*15 = 90
+      display.write(247); // 5th character  '°';    
+    }
      
     display.setCursor(0, 40);
     display.print(Display_Line6);   //10 
 
-    display.setCursor(24, 40); //x,y
-    display.write(247); // 5th character  '°';    
- 
+    if(DispExpSens3){
+      DispExpSens3 = OFF;
+      display.setCursor(24, 40); //x,y
+      display.write(247); // 5th character  '°';    
+    }
     display.setCursor(0, 48);
     display.print(Display_Line7);   //10 
  
     display.setCursor(0, 56); // 8th line
     display.print(Display_Line8);   //10 
 
-    display.setCursor(60, 56); //x,y  6*4 = 24
-    display.write(30); // 5th character  '°';  
+    if( DispExpLin8_1){
+      DispExpLin8_1 = OFF;
+      display.setCursor(60, 56); //x,y  6*4 = 24
+      display.write(30); // 5th character  '°';  
 
-    display.setCursor(72, 56); //x,y  6*4 = 24
-    display.write(31); // 5th character  '°';          
+      display.setCursor(72, 56); //x,y  6*4 = 24
+      display.write(31); // 5th character  '°';        
+    }
 
    display.display();
 }
@@ -399,7 +401,8 @@ String Disp_MENU2_SUB7= " 60 Sec     "; //12
 
 void DisplayMenu(void){
   switch(Menu){
-    case MENU_NULL : Display_Line8 = Disp_MENU_NULL_ENT;Display_Line8 += "   ";Display_Line8 += Disp_MENU_NULL_ESC;                     
+    case MENU_NULL : Display_Line8 = Disp_MENU_NULL_ENT;Display_Line8 += "   ";Display_Line8 += Disp_MENU_NULL_ESC;
+    DispExpLin8_1 = ON; // exception to show up down characters                    
       break;
     case MENU1 :  
     Display_Line8 = Disp_MENU1;
@@ -447,7 +450,7 @@ void UpdateSensorsTHVA(void){
     str = "";
     if (!isnan(Values.TemperatureSi072_Ch1)) {
           str += String(Values.TemperatureSi072_Ch1,1);
-          str += " C";  
+          str += " C";  DispExpSens1 = ON;
          //  str += '°';                          
     }
     else  str += "------";  
@@ -461,7 +464,7 @@ void UpdateSensorsTHVA(void){
 
     if (!isnan(Values.TemperatureSi072_Ch2)) {
           str += String(Values.TemperatureSi072_Ch2,1);
-           str += " C";                      
+           str += " C";   DispExpSens2 = ON;                   
         //  str += '°'; 
     }
     else  str += "------";  
@@ -478,7 +481,7 @@ void UpdateSensorsTHVA(void){
     str = "";
     if (!isnan(Values.TemperatureSi072_Ch3)) {
           str += String(Values.TemperatureSi072_Ch3,1);
-          str += " C";    
+          str += " C";    DispExpSens3 = ON;
      // str += '\°'; 
          // str += '/247';   olmaz             
           //display.write(247);
