@@ -241,13 +241,13 @@ void UpdateFileSize(){
       if(FileSize.Total < 100)str += ' ';   // 100 byte
       if(FileSize.Total < 10)str += ' ';   // 10  byte  
 
-      if(FileSize.Total >= 1000000){     
+      if(FileSize.Total >= 1000000){  // 1 mb   
         str += String(FileSize.Total / 1000000);  // 9 digit 
         str +='.';  // 9 digit 
         Remain = FileSize.Total % 1000000;        
-        if(Remain < 100000)str += ' '; //  _50000
-        if(Remain < 10000)str += ' ';  //  __5000
-        if(Remain < 1000)str += ' ';  //  ___500
+        if(Remain < 100000)str += '0'; //  _50000
+        if(Remain < 10000)str += '0';  //  __5000
+        if(Remain < 1000)str += '0';  //  ___500
       
         if(Remain  >= 1000){
           Remain2 = Remain % 1000;
