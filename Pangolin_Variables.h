@@ -1,23 +1,5 @@
 
-// function prototypes
-void MainLoop(); 
-void Display_ReInit(byte Timer);
-void  RTC_Init();
-void  SensorInit_Si072(byte);
-void  SensorAlt_Init();
-void  SensorLight_Init();
-void  SensorACccel_GyroInit();
-void  Sensors_PeripInit();
 
-void  AdcRead();
-void WindSensorRead();
-void  SensorRead_Si072();
-void  SensorAlt_Read();
-void  SensorLight_Read();
-void  SensorAcccel_GyroRead();
-void SDS_DustSensor(void);
-
-void EE_SerNoWrite2_EE(unsigned int SerialNo);
 
 // so variables
 
@@ -28,6 +10,7 @@ String Display_Line4 ="Display......Line4...";
 String Display_Line5 ="Display.....Line5....";
 String Display_Line6 ="Display....Line6.....";
 String Display_Line7 ="Display...Line7......";
+String Display_Line8 ="Display..Line8.......";
 
 byte Menu =0;
 unsigned int SerialCode =0;

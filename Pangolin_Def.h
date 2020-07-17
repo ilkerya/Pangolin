@@ -90,6 +90,28 @@ git push https://github.com/ilkerya/Pangolin.git master
 #define TMP_PINOUT 0 // TMP pin of sensor this is temperature output
 
 
+// function prototypes
+void MainLoop(); 
+void Display_ReInit(byte Timer);
+void  RTC_Init();
+void  SensorInit_Si072(byte);
+void  SensorAlt_Init();
+void  SensorLight_Init();
+void  SensorACccel_GyroInit();
+void  Sensors_PeripInit();
+
+void AnalogValRead();
+void  AdcRead();
+void WindSensorRead();
+void  SensorRead_Si072();
+void  SensorAlt_Read();
+void  SensorLight_Read();
+void  SensorAcccel_GyroRead();
+void SDS_DustSensor(void);
+void UpdateSensorsTHVA(void);
+void EE_SerNoWrite2_EE(unsigned int SerialNo);
+void UpdateDeviceEE();
+
 void EscMenuKey(void);
 void EnterMenuKey(void);
 void DownMenuKey(void);
@@ -105,7 +127,9 @@ void SD_Log_File(void);
 void SD_Info_Only(void);
 void DisplayFullSensors(void);
 void DisplayTestDevices(void);
-void CurrentRead(void);
+void SerialPortRx(void);
+
+
 
 /*
 First Time

@@ -1,34 +1,27 @@
 
 // https://www.onlinegdb.com/edit/Hkmlxi_08
 
-void ShowSerialCode(){
-    /*
-    SerialCode = EEPROM.read(4);
-    SerialCode <<= 8;
-    SerialCode += EEPROM.read(5);
-    Serial.print("SerialCode:");
-    Serial.println(SerialCode);
-    */
 
+
+
+void UpdateDeviceEE(){
     char c;
     EE_Id_EString =""; 
 
-    Serial.print("EE: ");
     c = (char)EEPROM.read(4);
     EE_Id_EString += String(c);
-    Serial.print(c);
+   
     c = (char)EEPROM.read(5);
     EE_Id_EString += String(c);
-    Serial.print(c);
+    
     c = (char)EEPROM.read(6);
     EE_Id_EString += String(c);
-    Serial.print(c);    
+   
     c = (char)EEPROM.read(7);
     EE_Id_EString += String(c);
-    Serial.print(c);
 
-    Serial.print(" EE_Id_EString: ");
-    Serial.print(EE_Id_EString);
+    Serial.print(" Device Id: ");
+    Serial.println(EE_Id_EString);
   
  /*   
     Serial.print(EEPROM.read(4));
@@ -37,7 +30,6 @@ void ShowSerialCode(){
     Serial.print(EEPROM.read(7));
 
  */   
-    Serial.println(); 
  }
 
 void MainLoop(void){
@@ -62,7 +54,7 @@ void MainLoop(void){
       #endif
     }
       #ifdef LEM_CURRENT_EXISTS        
-        CurrentRead();
+        AnalogValRead();
       #endif 
     
   }
@@ -74,14 +66,15 @@ void MainLoop(void){
   if(LoopTask_1Sec){
     LoopTask_1Sec = OFF;
     #ifndef DEBUG_SIMULATOR_MODE
-      RTC_SerialAdj();
+     
+      SerialPortRx();
       RTC_TimeClock();
-    
+/*    
       Serial.print("Str_Time:");
       Serial.println(Str_Time);
       Serial.print("Str_Date:");
       Serial.println(Str_Date);
-
+*/
 
       #ifdef WIND_SENSOR_EXISTS   
         WindSensorRead();
@@ -119,7 +112,7 @@ void MainLoop(void){
     KeyTimeOutCheck();
 
     if(SampleTime == TASK_1SEC) SD_CardLogTask();
-    ShowSerialCode();
+   
     
   }
   if(LoopTask_2Sec){
@@ -156,7 +149,7 @@ void MainLoop(void){
   }  
 }
 
-void CurrentRead(){
+void AnalogValRead(){
   // https://www.onlinegdb.com/edit/Hkmlxi_08
       
     deBugString = "Cur_tRd_1";
@@ -167,17 +160,18 @@ void CurrentRead(){
     Current_Mains_Raw = analogRead(4);
   //  Current_Mains_Raw_Trim = Current_Mains_Raw;
      //  delay(1);
-       delay(1);   
-     Mains_Volt_Raw =  analogRead(1);
+    //   delay(1);   
 
+    
+
+    
   //  239vac -> 4.94vdc
   // 242  vac  5vdc  242/1024 = 0.2363281
 
   //  238vac -> 3.10vdc  // 33K/8K2
   // 383  vac  5vdc  383/1024 = 0.374874
   
-
-    Mains_Volt =   (unsigned int)((float)Mains_Volt_Raw * 0.374874);     
+   
 
     CurrentArray[CurrentIndexer]= Current_Mains_Raw;
     CurrentIndexer++;
@@ -215,8 +209,10 @@ void CurrentRead(){
  //   Current_Mains = ((float)Current_Mains_Raw * 5.044)/1000;
   //   Current_Mains = ((float)Current_Mains_Raw * 9.766)/1000; // direct no voltage divider
 
+     Mains_Volt_Raw =  analogRead(1);
+    Mains_Volt =   (unsigned int)((float)Mains_Volt_Raw * 0.374874);  
    
-
+/*
    Serial.print("Current Adc: ");  
    Serial.println(Current_Mains_Raw);
    Serial.print("Current Average as Rms(A): ");  
@@ -225,7 +221,7 @@ void CurrentRead(){
    Serial.println(Mains_Volt_Raw);
    Serial.print("Voltage(Vac) :");  
    Serial.println(Mains_Volt);
-
+*/
   
    #ifdef ARDUINO_MEGA
    ADCSRA &= ~ (1 << ADEN);            // turn off ADC
@@ -242,16 +238,17 @@ void SDS_DustSensor(void){
                if(Values.PM25 >= 250.0)Values.PM25 = 250.0;
                if(Values.PM10 >= 250.0)Values.PM25 = 250.0;
                
-              
+              /*
             Serial.print("PM2.5 = ");
              Serial.print(Values.PM25);
              Serial.print(", PM10 = ");       
             Serial.println(Values.PM10);
+            */
 
           // if you want to just print the measured values, you can use toString() method as well
         //  Serial.println(pm.toString());
         } else {
-          Serial.print("Could not read values from sensor, reason: ");
+          Serial.print("Pm2.5 Problem: ");
           Serial.println(pm.statusToString());
         }
       #endif 

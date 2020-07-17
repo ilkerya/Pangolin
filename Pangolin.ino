@@ -196,8 +196,8 @@ void setup() {
     #endif
 
 
-    ShowSerialCode();
-        
+  //  ShowSerialCode();
+    UpdateDeviceEE();       
  /*
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
@@ -278,6 +278,7 @@ void TC3_Handler(){
     if(IntTimer2 >= 100){ // 2 sec
       IntTimer2 = 0;
       LoopTask_2Sec = ON;
+      PrintDisplayBuffer();
     }
     if(IntTimer5 >= 250){  // 5 sec
       IntTimer5 = 0;

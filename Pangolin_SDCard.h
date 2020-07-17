@@ -170,7 +170,7 @@ void SD_Card_Init(){
   //    SD_Card_Reset = OFF;//unknown 
   }
   else
-     Serial.println("card Ready For Logging."); 
+     //Serial.println("card Ready For Logging."); 
       switch(SDCard.Status){
       case 1 : SD_TypeString ="SD1 Card "; //SD1
       break;
@@ -329,18 +329,15 @@ void SD_CardLogTask(){
     deBugString = "SDCLgTsk_6";    
     if (dataFile) {
       dataFile.println(dataString);
-
-
       FileSize.Total = dataFile.size();
+/*
+
+      
       Serial.print("File Size:"); //  2020,07,07,01,05,40
       Serial.println(FileSize.Total); // 2020,07,07,01,05,40 
 
      unsigned long Remain;
-/*      
-#define KBYTES 1024
-#define MBYTES 1048576
-#define GBYTES 1073741824
-*/
+
 #define KBYTES 1000        //1000
 #define MBYTES 1000000     //1000.1000  Remain unsigned int 
 #define GBYTES 1000000000 // 1000.1000.1000   Remain long
@@ -375,16 +372,13 @@ void SD_CardLogTask(){
 
       Serial.println(); // 2020,07,07,01,05,40 
       
-        
-      
- 
-      
+      */  
+       
       dataFile.close();
       // print to the serial port too:
-        Serial.print("dataString:");
+      Serial.print("Data2 csv File:    ");
       Serial.println(dataString);
-
-      
+     
     }      
     // if the file isn't open, pop up an error:
   else {

@@ -11,8 +11,8 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesdy", "Wedns.", "Thurs.", "
 void RTC_TimeClock(){
 
   deBugString = "RTC_TClk_1";
-
     DateTime now = rtc.now();
+/*    
     Serial.print(now.year(), DEC);
     Serial.print('/');
     Serial.print(now.month(), DEC);
@@ -27,9 +27,8 @@ void RTC_TimeClock(){
     Serial.print(':');
     Serial.print(now.second(), DEC);
     Serial.println();
-
- //   Str_Date = "";
-//    Str_Date += String (daysOfTheWeek[now.dayOfTheWeek()]);
+    
+*/
 
     Str_DispTime = "";
     Str_DispTime += String(now.year(),DEC);   
@@ -126,7 +125,7 @@ void RTC_TimeClock(){
   }
  }
 
- void RTC_SerialAdj() {
+ void SerialPortRx() {
 
   deBugString = "RTCSrlAd_1";
     static byte ndx = 0;
@@ -242,6 +241,8 @@ void RTC_TimeClock(){
           EEPROM.write(7, receivedChars[7]);// low byte
        */   
           delay(10);
+
+          UpdateDeviceEE();
 
           
         //EE_SerNoWrite2_EE();

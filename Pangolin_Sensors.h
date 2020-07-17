@@ -220,23 +220,23 @@ void GerSerialNo(void){
 void SensorRead_Si072(byte Channel){
     if(Channel != NO_IC2_MULTIPLEXER)tcaselect(Channel);
 
-    Serial.print("Humidity_");Serial.print(Channel);Serial.print(" %");
+   // Serial.print("Humidity_");Serial.print(Channel);Serial.print(" %");
 
     switch(Channel){
       case NO_IC2_MULTIPLEXER:
       case SI072_FIRST_SENSOR: 
         Values.Humidity_Ch1 = THsensor.readHumidity();       
-        Serial.print(Values.Humidity_Ch1, 2);
+      //  Serial.print(Values.Humidity_Ch1, 2);
    
        break;
       case SI072_SECOND_SENSOR: 
         Values.Humidity_Ch2 = THsensor.readHumidity();
-        Serial.print(Values.Humidity_Ch2, 2);
+   //     Serial.print(Values.Humidity_Ch2, 2);
 
        break;
       case SI072_THIRD_SENSOR: 
         Values.Humidity_Ch3 = THsensor.readHumidity();
-        Serial.print(Values.Humidity_Ch3, 2);
+     //   Serial.print(Values.Humidity_Ch3, 2);
  
        break; 
        default:
@@ -244,21 +244,21 @@ void SensorRead_Si072(byte Channel){
        break;
     }
  
-    Serial.print(" Temperature");Serial.print(Channel);Serial.print(" :");
+  //  Serial.print(" Temperature");Serial.print(Channel);Serial.print(" :");
 
     switch(Channel){
       case NO_IC2_MULTIPLEXER:
       case SI072_FIRST_SENSOR: 
         Values.TemperatureSi072_Ch1 = THsensor.readTemperature();
-        Serial.println(Values.TemperatureSi072_Ch1, 2);
+   //     Serial.println(Values.TemperatureSi072_Ch1, 2);
        break;
       case SI072_SECOND_SENSOR: 
         Values.TemperatureSi072_Ch2 = THsensor.readTemperature();
-        Serial.println(Values.TemperatureSi072_Ch2, 2);
+    //    Serial.println(Values.TemperatureSi072_Ch2, 2);
        break;
       case SI072_THIRD_SENSOR: 
         Values.TemperatureSi072_Ch3 = THsensor.readTemperature();
-        Serial.println(Values.TemperatureSi072_Ch3, 2);
+   //     Serial.println(Values.TemperatureSi072_Ch3, 2);
        break; 
        default:
         Serial.print("error");

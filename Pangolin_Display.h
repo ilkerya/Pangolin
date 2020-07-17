@@ -200,8 +200,9 @@ void SDCard_or_File(){
     }      
 }
 
-
-void ShowLogTime(){
+void UpdateSD_LogTime(){
+    if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
+    else Display_Line2 = "SD problem!";
     Display_Line2 += "    ";
     //  String DispSample="";
       switch(SampleTime){
@@ -222,65 +223,10 @@ void ShowLogTime(){
       }  
 }
 
-
-
-  /*
-   display.print(' ');
-    if( FileSize.Total) {
-      if(FileSize.Total < 100000000)display.print(' ');   // 100 Mb     
-      if(FileSize.Total < 10000000)display.print(' ');   // 10 Mb
-      
-      if(FileSize.Total < 1000000)display.print(' ');   // 1 Mb
-      if(FileSize.Total < 100000)display.print(' ');   // 100 kb
-      if(FileSize.Total < 10000)display.print(' ');   // 10 kb
-      
-      if(FileSize.Total < 1000)display.print(' ');   // 1 kb
-      if(FileSize.Total < 100)display.print(' ');   // 100 byte
-      if(FileSize.Total < 10)display.print(' ');   // 10  byte  
-
-
-   if(FileSize.Total >= 1000000){     
-      display.print(FileSize.Total / 1000000);  // 9 digit 
-      display.print('.');  // 9 digit 
-      Remain = FileSize.Total % 1000000;        
-      if(Remain < 100000)display.print('0'); //  _50000
-      if(Remain < 10000)display.print('0');  //  __5000
-      if(Remain < 1000)display.print('0');  //  ___500
-      
-      
-     // display.print('.');  // 9 digit
-    if(Remain  >= 1000){
-      Remain2 = Remain % 1000;
-       display.print(Remain / 1000);  // 9 digit 
-       display.print('.');  // 9 digit
-      if(Remain2 < 100)display.print('0');
-      if(Remain2 < 10)display.print('0');
-      display.print(Remain2);  // 9 digit       
-    }
-
-      
-    }
-    else if(FileSize.Total >= 1000){
-       Remain = FileSize.Total % 1000;
-      display.print(FileSize.Total / 1000);  // 9 digit 
-      display.print('.');  // 9 digit 
-      if(Remain < 100)display.print('0');
-      if(Remain < 10)display.print('0');
-      display.print(Remain);  // 9 digit 
-    }
-    else display.print(FileSize.Total); // less than 1000
-            
-  //    display.print(FileSize.Total);  // 9 digit 
-      display.print(" Bytes"); //6 digit  total 15
-    }
-    else display.print("                    ");
-    display.println();
-*/
-void SizeOffSD(){
+void UpdateFileSize(){
     String str;
      unsigned long Remain;
      unsigned long   Remain2;
-
     str = ' ';
     if( FileSize.Total == 0) str += "                    ";//20 
     
@@ -326,19 +272,55 @@ void SizeOffSD(){
       Display_Line3 = str;
 }
 
+void PrintDisplayBuffer(void){
+      Serial.println();
+      Serial.println();
+      Serial.println("   DISPLAY  8x21     ");
+      Serial.println(Display_Line1);
+      Serial.println(Display_Line2);
+      Serial.println(Display_Line3);
+      Serial.println(Display_Line4);
+      Serial.println(Display_Line5);
+      Serial.println(Display_Line6);
+      Serial.println(Display_Line7);
+      Serial.println(Display_Line8);
+      Serial.println();
+      Serial.println();   
+
+    // Additionals
+    Serial.print("DevId: ");Serial.print(EE_Id_EString);
+    Serial.print("    Sensor1: ");Serial.print(Sensor1_Id);
+    Serial.print("    Sensor2: ");Serial.print(Sensor2_Id);
+    Serial.print("    Sensor3: ");Serial.print(Sensor3_Id);
+
+    Serial.println();   
+    Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__);
+
+// The string in Flash
+Serial.print( F("Compiled: ");
+Serial.print( F(__DATE__));
+Serial.print( F(", "));
+Serial.print( F(__TIME__));
+Serial.print( F(", "));
+Serial.println( F(__VERSION__));
+    
+
+    Serial.println();
+    Serial.println();
+        
+}
+
 void UpdateDisplayBuffer(void){
     String *str;
     Display_Line1 = String(Str_Date) + "   " + String(Str_Time);
     
-    if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
-    else Display_Line2 = "SD problem!";
-    ShowLogTime();
-
-    SizeOffSD();
-
-    DisplayTestDevices();
+   // ShowLogTime();
+    UpdateSD_LogTime();// Line2
+    UpdateFileSize();// Line3
+    UpdateSensorsTHVA();// Line4 Line 5
     // DisplayFullSensors();
-  
+    DisplayMenu(); // Line8
+    
 }
 
 void displayValues(void)
@@ -367,7 +349,7 @@ void displayValues(void)
     display.setCursor(0, 32);
     display.print(Display_Line5);   //10 
 
-     display.setCursor(24, 32); //x,y  6*4 = 24
+    display.setCursor(24, 32); //x,y  6*4 = 24
     display.write(247); // 5th character  '°';   
     display.setCursor(90, 32); //x,y  6*15 = 90
     display.write(247); // 5th character  '°';   
@@ -378,17 +360,23 @@ void displayValues(void)
     display.setCursor(24, 40); //x,y
     display.write(247); // 5th character  '°';    
  
-     display.setCursor(0, 48);
-     display.print(Display_Line7);   //10 
+    display.setCursor(0, 48);
+    display.print(Display_Line7);   //10 
  
     display.setCursor(0, 56); // 8th line
-    DisplayMenu();
+    display.print(Display_Line8);   //10 
+
+    display.setCursor(60, 56); //x,y  6*4 = 24
+    display.write(30); // 5th character  '°';  
+
+    display.setCursor(72, 56); //x,y  6*4 = 24
+    display.write(31); // 5th character  '°';          
 
    display.display();
 }
 
 //String Disp_MENU_NULL = "ENTER  UP DOWN    ESC";
-String Disp_MENU_NULL_ENT = "ENTER     ";
+String Disp_MENU_NULL_ENT = "ENTER     "; // 10
 String Disp_MENU_NULL_ESC = "     ESC";
 
 String Disp_MENU1 =     "LOG START & STOP MENU";
@@ -411,94 +399,56 @@ String Disp_MENU2_SUB7= " 60 Sec     "; //12
 
 void DisplayMenu(void){
   switch(Menu){
-    case MENU_NULL :// display.print(Disp_MENU_NULL); 
-          display.print(Disp_MENU_NULL_ENT);                           
-          display.write(30);  
-          display.write(' '); 
-          display.write(31); 
-          display.print(Disp_MENU_NULL_ESC);                    
+    case MENU_NULL : Display_Line8 = Disp_MENU_NULL_ENT;Display_Line8 += "   ";Display_Line8 += Disp_MENU_NULL_ESC;                     
       break;
-    case MENU1 :     display.print(Disp_MENU1); 
+    case MENU1 :  
+    Display_Line8 = Disp_MENU1;
       break;
-    case MENU2 :     display.print(Disp_MENU2); 
+    case MENU2 :   
+    Display_Line8 = Disp_MENU2;
       break;
-    case MENU3 :     display.print(Disp_MENU3); 
+    case MENU3 :   
+    Display_Line8 = Disp_MENU3;
       break;
-
-    case MENU1_SUB1 :display.print(Disp_MENU1_SUB1); 
+    case MENU1_SUB1 :Display_Line8 = Disp_MENU1_SUB1;
       break;
-    case MENU1_SUB2 :display.print(Disp_MENU1_SUB2); 
+    case MENU1_SUB2 : Display_Line8 = Disp_MENU1_SUB2;
       break;
-
-    case MENU2_SUB1 : display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB1);  
+    case MENU2_SUB1 : Display_Line8 = Disp_MENU2_SUB;Display_Line8 += Disp_MENU2_SUB1;   
       break;
-    case MENU2_SUB2 : display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB2);    
+    case MENU2_SUB2 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB2;  
       break;
-    case MENU2_SUB3 : display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB3);   
+    case MENU2_SUB3 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB3;
       break;
-    case MENU2_SUB4 :display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB4);    
+    case MENU2_SUB4 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB4;
       break;
-    case MENU2_SUB5 :display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB5);    
+    case MENU2_SUB5 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB5;   
       break;
-    case MENU2_SUB6 : display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB6);   
+    case MENU2_SUB6 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB6;
       break;
-    case MENU2_SUB7 :display.print(Disp_MENU2_SUB); display.print(Disp_MENU2_SUB7);    
+    case MENU2_SUB7 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB7; 
       break;
-
-    case MENU3_SUB1 : display.print(Disp_MENU3_SUB1);  
+    case MENU3_SUB1 : Display_Line8 = Disp_MENU3_SUB1;
       break;
-    case MENU3_SUB2 :  display.print(Disp_MENU3_SUB2); 
+    case MENU3_SUB2 :  Display_Line8 = Disp_MENU3_SUB2;
       break;
-
     default: 
     break;
   }
 }
-void DisplayFullSensors(void){
-    display.print("x");
-    display.print(Accelometer.x); //6
-    
-    display.print(" y");
-    display.print(Accelometer.y); //7
-    
 
-     display.print(" z");
-     display.println(Accelometer.z); //7     
-    
-    
-    display.print(Values.TemperatureSi072_Ch1,1);
-   //  display.print("°");                     
-    display.print("C %");
-    display.print(Values.Humidity_Ch1,1); //
-    display.print(" Lm:");
-    display.println(Values.Luminosity); //
-
-    display.print(Values.Pressure,0);
-    display.print("hPA ");
-    display.print(Values.TemperatureBMP,1);
-   //  display.print("\0x7F");   
-    display.print("C ");  
-    display.print(Values.Altitude,1);
-    display.println("m"); 
-}
-
-void DisplayTestDevices(void){
+void UpdateSensorsTHVA(void){
 
     String str;
     str += " " + String(Mains_Volt) + "V ";
     str += String(Current_Mains_Rms) + "A ";   
-
     Display_Line4 = str;
   
-    
     str = "";
     if (!isnan(Values.TemperatureSi072_Ch1)) {
           str += String(Values.TemperatureSi072_Ch1,1);
-          str += "'C";  
-         //  str += '/247';  
+          str += " C";  
          //  str += '°';                          
-          //display.write(247);
-        //  str +="C"; 
     }
     else  str += "------";  
        
@@ -507,16 +457,12 @@ void DisplayTestDevices(void){
     str += String((int)Values.Humidity_Ch1); // 
    }
     else   str +="----";  
-
     str +=" ";
-
 
     if (!isnan(Values.TemperatureSi072_Ch2)) {
           str += String(Values.TemperatureSi072_Ch2,1);
-           str += "'C";                      
-          //display.write(247);
+           str += " C";                      
         //  str += '°'; 
-        //  str +="C"; 
     }
     else  str += "------";  
        
@@ -530,10 +476,9 @@ void DisplayTestDevices(void){
     Display_Line5 = str;
 
     str = "";
-
     if (!isnan(Values.TemperatureSi072_Ch3)) {
           str += String(Values.TemperatureSi072_Ch3,1);
-          str += "'C";    
+          str += " C";    
      // str += '\°'; 
          // str += '/247';   olmaz             
           //display.write(247);
@@ -555,96 +500,49 @@ void DisplayTestDevices(void){
 
     Display_Line6 = str;
 
-/*
-     display.print(" ");
-     display.print(Mains_Volt); //7 
-     display.print("V ");
-
-     display.print(Current_Mains_Rms); //7  
-     display.println("A");
-
-
-    if (!isnan(Values.TemperatureSi072_Ch1)) {
-          display.print(Values.TemperatureSi072_Ch1,1);                    
-          display.write(247);display.print("C"); 
-    }
-    else  display.print("------");  
-
-
-   
-   if (!isnan(Values.Humidity_Ch1)) {
-    display.print(" %");
-    display.print((int)Values.Humidity_Ch1); // 
-   }
-    else  display.print("----");  
-      
-    display.print(" ");
-
-
-  // display.print("2:");  
-   if (!isnan(Values.TemperatureSi072_Ch2)) {
-        display.print(Values.TemperatureSi072_Ch2,1);
-        display.write(247);display.print("C"); 
-   }
-    else  display.print("------");  
-
-    if (!isnan(Values.Humidity_Ch2)) {
-    display.print(" %");
-    display.print((int)Values.Humidity_Ch2); // 
-   }
-    else  display.print("----");      
-
-  //  display.print(" ");
- //  display.print("3:");  
-      display.println(""); 
-     if (!isnan(Values.TemperatureSi072_Ch3)) {
-        display.print(Values.TemperatureSi072_Ch3,1);
-        display.write(247);display.print("C"); 
-   }
-    else  display.print("------");  
-
-    if (!isnan(Values.Humidity_Ch3)) {
-    display.print(" %");
-    display.print((int)Values.Humidity_Ch3); // 
-   }
-    else  display.print("----");     
-
-    display.print(" "); // 
-    display.print("PM2.5 ");
-    if(Values.PM25 < 100.00)display.println(Values.PM25,1);
-    else display.println(Values.PM25,0);
-      
-    */
-    //
-
-    
-    
-  //  display.println(deBugString); // 
     str = "";
     switch(DisplayValueTimer){
       case 0:     
-        //  display.print("Dev Id:  "); // 
-       //   display.print(EE_Id_EString); //
           str += "Dev Id:  " + EE_Id_EString;
          break;
          case 1:
-      //    display.print("1.   "); // SI072_FIRST_SENSOR
-     //     display.println(Sensor1_Id);
           str += "1.   " + Sensor1_Id;
          break;
          case 2:
-    //      display.print("2.   "); // SI072_SECOND_SENSOR
-    //      display.println(Sensor2_Id);
           str += "2.   " + Sensor2_Id;
          break;
          case 3:        
-    //        display.print("3.   "); // SI072_THIRD_SENSOR
-     //       display.println(Sensor3_Id);
             str += "3.   " + Sensor3_Id;
          break;
          default:
          break;  
     }  
 
-          Display_Line7 = str;
+     Display_Line7 = str;
+}
+void DisplayFullSensors(void){
+    display.print("x");
+    display.print(Accelometer.x); //6
+    
+    display.print(" y");
+    display.print(Accelometer.y); //7
+
+     display.print(" z");
+     display.println(Accelometer.z); //7     
+    
+    
+    display.print(Values.TemperatureSi072_Ch1,1);
+   //  display.print("°");                     
+    display.print("C %");
+    display.print(Values.Humidity_Ch1,1); //
+    display.print(" Lm:");
+    display.println(Values.Luminosity); //
+
+    display.print(Values.Pressure,0);
+    display.print("hPA ");
+    display.print(Values.TemperatureBMP,1);
+   //  display.print("\0x7F");   
+    display.print("C ");  
+    display.print(Values.Altitude,1);
+    display.println("m"); 
 }
