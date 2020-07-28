@@ -7,9 +7,9 @@
 //   git remote add origin git@github.com:ilkerya/Pangolin.git
 //  https://github.com/ilkerya/Pangolin
 //  https://blog.plover.com/prog/git-ff-error.html
-
-
-  
+// C:\Users\Yagciilk\Documents\Arduino\libraries
+// C:\Program Files (x86)\Arduino\libraries   
+// C:\Projects\Pangolin\Pangolin\ArduinoCore\include  default AtmelStudio Project lib locations
 /*
 git add .
 git commit -m "Comment"
@@ -32,10 +32,13 @@ git push https://github.com/ilkerya/Pangolin.git master
 #define VOLTAGE_MEASURE_EXISTS
 #define PM25_DUST_SENSOR_EXISTS
 
+#define  MAXSHOWLINE 6  // define how many lines for sensorts to show including fw info line 
+
 #define DEBUG_KEY
 #define LED_GREEN 3// 11//3 // GREEN
 #define LED_RED 4 // 12//4 //RED
 
+#define CS_PIN 8              //8-->Arduino Zero. 15-->ESP8266 
 
 #define ON 1 //
 #define OFF 0 //
@@ -91,7 +94,10 @@ git push https://github.com/ilkerya/Pangolin.git master
 
 
 // function prototypes
-void MainLoop(); 
+void Common_Loop(); 
+void ResetCasePrint();
+void IO_Settings();
+void MicroInit(void);
 void Display_ReInit(byte Timer);
 void  RTC_Init();
 void  SensorInit_Si072(byte);
@@ -108,9 +114,11 @@ void  SensorAlt_Read();
 void  SensorLight_Read();
 void  SensorAcccel_GyroRead();
 void SDS_DustSensor(void);
-void UpdateSensorsTHVA(void);
+void UpdateSensorInfo(void);
 void EE_SerNoWrite2_EE(unsigned int SerialNo);
 void UpdateDeviceEE();
+void UpdateInfoLine();
+void UpdateDisplayMenu();
 
 void EscMenuKey(void);
 void EnterMenuKey(void);
@@ -128,7 +136,7 @@ void SD_Info_Only(void);
 void DisplayFullSensors(void);
 void DisplayTestDevices(void);
 void SerialPortRx(void);
-
+void UpdateDispRoll(void);
 
 
 /*

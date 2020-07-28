@@ -11,9 +11,10 @@ String Display_Line5 ="Display.....Line5....";
 String Display_Line6 ="Display....Line6.....";
 String Display_Line7 ="Display...Line7......";
 String Display_Line8 ="Display..Line8.......";
-
+String FW_Version ="" ;
 byte Menu =0;
 unsigned int SerialCode =0;
+byte DispRollIndex[4] = {1,0,0,0};
 
 unsigned int KeyLogger=0;
 
@@ -106,7 +107,8 @@ String Sensor_Info_SDS= "";
 // the logging file
 File logfile;
 
-#define LOG_FILE "AD_Log.csv"
+String LOG_FILE =  "LOG_xxxx.csv";
+//#define LOG_FILE "AD_Log.csv"
 
 struct
 {

@@ -185,16 +185,19 @@ void SDcard_Info(){
 void SDCard_or_File(){
     switch(DisplayValueTimer){
       case 0:
-      case 2:     
+      case 2:
+      case 4:       
            if(SDCard.Status = SD1_TYPE)      Display_Line2 = "SD1 ";         
            else if(SDCard.Status = SD2_TYPE) Display_Line2 = "SD2 ";           
            else if(SDCard.Status = SDHC_TYPE)Display_Line2 = "SDH ";
-           Display_Line2 += String(SD_Volume) + "Gb" ; 
-      break;
-         case 1:
-         case 3: 
-           Display_Line2 = String(LOG_FILE) + ' ';
+           Display_Line2 += String(SD_Volume) + "Gb " ;   // 4+5+3
          break;
+      case 1:
+      case 3: 
+           Display_Line2 = String(LOG_FILE) ; // 12
+         break;
+   //   case 4:
+   //      break;
          default:
          break;  
     }      
@@ -202,8 +205,8 @@ void SDCard_or_File(){
 
 void UpdateSD_LogTime(){
     if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
-    else Display_Line2 = "SD problem!";
-    Display_Line2 += "    ";
+    else Display_Line2 = "SD problem! ";
+    Display_Line2 += "   "; // 3
     //  String DispSample="";
       switch(SampleTime){
        case TASK_500MSEC:Display_Line2 += "0.5Sec"; //5 
@@ -241,7 +244,7 @@ void UpdateFileSize(){
       if(FileSize.Total < 100)str += ' ';   // 100 byte
       if(FileSize.Total < 10)str += ' ';   // 10  byte  
 
-      if(FileSize.Total >= 1000000){  // 1 mb   
+      if(FileSize.Total >= 1000000){  // 1 mb   // find out the 1millions dot place and remaining leading zeros
         str += String(FileSize.Total / 1000000);  // 9 digit 
         str +='.';  // 9 digit 
         Remain = FileSize.Total % 1000000;        
@@ -258,7 +261,7 @@ void UpdateFileSize(){
           str += String(Remain2);  // 9 digit       
         }  
       }
-      else if(FileSize.Total >= 1000){
+      else if(FileSize.Total >= 1000){ // find out the 1000s dot place and remaining leading zeros
         Remain = FileSize.Total % 1000;
         str += String(FileSize.Total / 1000);  // 9 digit 
         str +='.';   // 9 digit 
@@ -294,24 +297,125 @@ void PrintDisplayBuffer(void){
     Serial.print("    Sensor3: ");Serial.print(Sensor3_Id);
 
     Serial.println();   
-    Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__); 
-
+    //Compiled: Jul 21 2020 15:55:39 7.3.0
+    Serial.println( "Compiled: " + FW_Version  + ' ' + __VERSION__);  // 11 1 8
+   // Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__);   
     Serial.println();
     Serial.println();
         
 }
 
+
+
+void UpdateProperLine(byte Index, byte Line){
+    String str ="";
+    switch(Index){
+      case 0: //// show nothing                 
+      break;    
+      case 1: str = "FW " + FW_Version;  // fw version compile time             
+      break;
+      case 2: str += "Dev Id:  " + EE_Id_EString;  // device id           
+      break;
+      case 3:  str = "1."; // temp sensor1              1.   " + Sensor1_Id;
+          if (!isnan(Values.TemperatureSi072_Ch1)) {
+            str += String(Values.TemperatureSi072_Ch1,1);
+            str += " C";  DispExpSens1 = ON;//  str += '°';                          
+          }
+          else  str += "------";       
+          if (!isnan(Values.Humidity_Ch1)) {
+            str +=" %";
+            str += String((int)Values.Humidity_Ch1); // 10...
+          }
+          else   str +="----"; 
+          str += ' ' + Sensor1_Id;
+     break;
+     case 4: str = "2."; // temp sensor2
+          if (!isnan(Values.TemperatureSi072_Ch2)) {
+            str += String(Values.TemperatureSi072_Ch2,1);
+            str += " C";   DispExpSens2 = ON;                   //  str += '°'; 
+          }
+          else  str += "------";        
+          if (!isnan(Values.Humidity_Ch2)) {
+            str +=" %";
+            str += String((int)Values.Humidity_Ch2); // 
+          }
+          else   str +="----";
+          str += ' ' + Sensor2_Id;              
+     break;
+     case 5: str = "3."; // temp sensor3
+         if (!isnan(Values.TemperatureSi072_Ch3)) {
+            str += String(Values.TemperatureSi072_Ch3,1);
+            str += " C";    DispExpSens3 = ON;
+        }
+        else  str += "------";  
+        if (!isnan(Values.Humidity_Ch3)) {
+          str +=" %";
+          str += String((int)Values.Humidity_Ch3); // 
+        }
+        else   str +="----";   // 10 lines
+        str += ' ' + Sensor3_Id;
+              
+     break;
+     case 6:     str += " " + String(Mains_Volt) + "V ";
+                str += String(Current_Mains_Rms) + "A ";  
+                // current voltage
+     break;      
+     case 7:     str += "PM2.5 ";
+                  if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
+                  else str += String(Values.PM25,0);
+               // dust sensor
+     break;     
+
+    default: str = "default";
+    break;    
+    }
+
+    switch(Line){
+      case 4: Display_Line4 = str;                  
+      break; 
+      case 5: Display_Line5 = str;             
+      break;
+      case 6:Display_Line6 = str;
+      break;
+      case 7:Display_Line7 = str;     
+      break;
+      default:              // 
+      break;
+    }        
+}
+
+
 void UpdateDisplayBuffer(void){
     String *str;
     Display_Line1 = String(Str_Date) + "   " + String(Str_Time);
-    
+
+      
    // ShowLogTime();
     UpdateSD_LogTime();// Line2
     UpdateFileSize();// Line3
-    UpdateSensorsTHVA();// Line4 Line 5
-    // DisplayFullSensors();
-    DisplayMenu(); // Line8
+ //   UpdateSensorInfo();// Line4 Line 5 Line 6
+ //   UpdateInfoLine(); // Line7
+      UpdateProperLine(DispRollIndex[0], 4); // Line 4
+      UpdateProperLine(DispRollIndex[1], 5); // Line 5
+      UpdateProperLine(DispRollIndex[2], 6); // Line 6
+      UpdateProperLine(DispRollIndex[3], 7); // Line 7
+
+   
     
+    // DisplayFullSensors();
+    
+
+    
+    UpdateDisplayMenu(); // Line8
+
+
+
+   
+    
+    
+     
+     
+     
 }
 
 void displayValues(void)
@@ -399,7 +503,7 @@ String Disp_MENU2_SUB5= " 10 Sec     "; //12
 String Disp_MENU2_SUB6= " 20 Sec     "; //12
 String Disp_MENU2_SUB7= " 60 Sec     "; //12
 
-void DisplayMenu(void){
+void UpdateDisplayMenu(void){
   switch(Menu){
     case MENU_NULL : Display_Line8 = Disp_MENU_NULL_ENT;Display_Line8 += "   ";Display_Line8 += Disp_MENU_NULL_ESC;
     DispExpLin8_1 = ON; // exception to show up down characters                    
@@ -439,8 +543,32 @@ void DisplayMenu(void){
     break;
   }
 }
+void UpdateInfoLine(){
+    String str = "";
+    switch(DisplayValueTimer){
+      case 0:     
+          str += "Dev Id:  " + EE_Id_EString;
+         break;
+         case 1:
+          str += "1.   " + Sensor1_Id;
+         break;
+         case 2:
+          str += "2.   " + Sensor2_Id;
+         break;
+         case 3:        
+            str += "3.   " + Sensor3_Id;
+         break;
+         case 4:        
+            str += "FW " + FW_Version;
+         break;         
+         default:
+         break;  
+    }  
 
-void UpdateSensorsTHVA(void){
+     Display_Line7 = str;
+ }
+
+void UpdateSensorInfo(void){
 
     String str;
     str += " " + String(Mains_Volt) + "V ";
@@ -503,25 +631,7 @@ void UpdateSensorsTHVA(void){
 
     Display_Line6 = str;
 
-    str = "";
-    switch(DisplayValueTimer){
-      case 0:     
-          str += "Dev Id:  " + EE_Id_EString;
-         break;
-         case 1:
-          str += "1.   " + Sensor1_Id;
-         break;
-         case 2:
-          str += "2.   " + Sensor2_Id;
-         break;
-         case 3:        
-            str += "3.   " + Sensor3_Id;
-         break;
-         default:
-         break;  
-    }  
 
-     Display_Line7 = str;
 }
 void DisplayFullSensors(void){
     display.print("x");

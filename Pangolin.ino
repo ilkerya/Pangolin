@@ -14,7 +14,6 @@
  
  // #define DEBUG_SIMULATOR_MODE // For DEbugging As A Simulator
  
-
  #define ARDUINO_MEGA // 8 bit AVR
  //#define ARDUINO_DUE // ARM Cortex M3
 
@@ -23,7 +22,6 @@
 #include <EEPROM.h>
 #include <avr/wdt.h>
 
-#define CS_PIN 8              //8-->Arduino Zero. 15-->ESP8266 
 /*
 ///  ADE9153A INIT
 #define ARM_MATH_CM0PLUS
@@ -54,7 +52,8 @@ const long reportInterval = 2000;
 const long blinkInterval = 500;
 */
 ///  ADE9153A END
-    
+// C:\Projects\Pangolin\..   Atmel Studio Project Path
+// C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths    
 #include "RTClib.h"
 
 #include <Adafruit_GFX.h>
@@ -64,7 +63,7 @@ const long blinkInterval = 500;
 #include "Adafruit_TSL2591.h"
 #include "Adafruit_BMP3XX.h"
 #include "Arduino_LSM9DS1.h"
-#include <SdsDustSensor.h> // https://github.com/lewapek/sds-dust-sensors-arduino-library
+#include "SdsDustSensor.h" // https://github.com/lewapek/sds-dust-sensors-arduino-library
 
 
 // C:\Users\Yagciilk\Documents\Arduino\Pangolin
@@ -95,138 +94,9 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
 
 
 void setup() {
-   byte RESET_CASE = MCUSR;
-
-      pinMode(53, OUTPUT);  // SS Pin high to avoid miscommunication
-   digitalWrite(53, HIGH);  
-  
-     pinMode(10, OUTPUT);
-   digitalWrite(10, HIGH);  
-
-     pinMode(4, OUTPUT);  // ADE9153A_RESET_PIN
-   digitalWrite(4, HIGH);  
-/*
-    pinMode(A0, OUTPUT);
-    digitalWrite(A0, HIGH);
-
-    pinMode(A2, OUTPUT);
-    digitalWrite(A2, LOW);
-*/
- //   pinMode(A5, INPUT);
- //   digitalWrite(A5, LOW);
-    
-  //  pinMode(A5, OUTPUT);
- //   digitalWrite(A5, LOW);
-
-  // Open serial communications and wait for port to open:
-  Serial.begin(115200);
-  delay(10);
-
-
-        Serial.print("MCUSR: ");
-        Serial.println(RESET_CASE);
-
-
-  if(MCUSR & WDRF) {
-    Serial.print("Rebooting from a Watchdog Reset");
-  }
-  else if(MCUSR & BORF) {
-    Serial.print("Rebooting from a Brown-out Reset");
-  }
-  else if(MCUSR & EXTRF) {
-    Serial.print("Rebooting from an External Reset");
-  }
-   else if(MCUSR & PORF) {
-              Serial.print("Rebooting from a Power On Reset");
-  }
-
-        if(MCUSR & (1<<WDRF)){
-            // a watchdog reset occurred
-            Serial.print("Rebooting from a Watchdog Reset");
-          } 
-          if(MCUSR & (1<<BORF)){
-            Serial.print("Rebooting from a Brown-out Reset");
-          }
-          //  a brownout reset occurred       
-         if(MCUSR & (1<<EXTRF)){
-            //  an external reset occurred
-            Serial.print("Rebooting from an External Reset");
-         }       
-          if(MCUSR & (1<<PORF)){
-              //  a power on reset occurred
-              Serial.print("Rebooting from a Power On Reset");
-          }
-
-          //Clear register
-           MCUSR = 0x00;
-
-  //  SDCard.LogStatus = 0;      // default start with log off;
-  EEReadLog();
-  SDCard.LogStatusInit = 0;  // put the header of the csv file 
-
-   Serial.print("SDCard.LogStatus: ");  
-   Serial.print(SDCard.LogStatus); 
-   Serial.print("    SampleTime: ");  
-   Serial.println(SampleTime); 
-       
-  
-    pinMode(LED_GREEN, OUTPUT);           // set pin to input
-    digitalWrite(LED_GREEN, LOW);       // turn on pullup resistors  
-    pinMode(LED_RED, OUTPUT);           // set pin to input
-    digitalWrite(LED_RED, LOW);       // turn on pullup resistors
-
-
-    pinMode(KEY_LEFT, INPUT);           // set pin to input
-    pinMode(KEY_LEFT,INPUT_PULLUP);
-
-    pinMode(KEY_MID, INPUT);           // set pin to input
-    pinMode(KEY_MID,INPUT_PULLUP);
-
-    pinMode(KEY_RIGHT, INPUT);           // set pin to input
-    pinMode(KEY_RIGHT,INPUT_PULLUP);
-    //wdt_enable(WDT0_1S);
-
-    wdt_reset();
-    wdt_enable(WDTO_8S);
-    //https://www.nongnu.org/avr-libc/user-manual/group__avr__watchdog.html
-   
-    
-    #ifdef ARDUINO_MEGA
-       ADCSRA &= ~ (1 << ADEN);            // turn off ADC to save power ,, enable when needed and turn off again
-    #endif
-
-
-  //  ShowSerialCode();
-    UpdateDeviceEE();       
- /*
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-  */
- #ifndef DEBUG_SIMULATOR_MODE
-    Sensors_PeripInit();
-  #endif
-
-
-    #ifdef ARDUINO_MEGA
-     #endif
-
-    #ifdef ARDUINO_MEGA
-             // initialize timer1 
-      noInterrupts();           // disable all interrupts
-      TCCR1A = 0;
-      TCCR1B = 0;
-   //    TCNT1 = 34286;            // preload timer 65536-16MHz/256/2Hz 500mS
-       TCNT1 = 64286;            // preload timer 65536-16MHz/256/50Hz 20 ms       
-       TCCR1B |= (1 << CS12);    // 256 prescaler 
-       TIMSK1 |= (1 << TOIE1);   // enable timer overflow interrupt
-       interrupts(); 
-     #endif
-     
-     #ifdef ARDUINO_DUE
-     startTimer(TC1, 0, TC3_IRQn, 64); //TC1 channel 0, the IRQ for that channel and the desired frequency
-     #endif
+  MicroInit();
 }
+
 #ifdef ARDUINO_DUE
 void TC3_Handler(){
         TC_GetStatus(TC1, 0);
@@ -242,6 +112,7 @@ ISR(TIMER1_OVF_vect){        // interrupt service routine that wraps a user defi
  //   TCNT1 = 34286;            // preload timer for 500mSec
        TCNT1 = 64286;            // preload timer for 20mSec
     #endif
+    
     #ifdef ARDUINO_DUE
 void TC3_Handler(){
         TC_GetStatus(TC1, 0);
@@ -302,6 +173,6 @@ void TC3_Handler(){
 }
 // the loop function runs over and over again forever
 void loop() {
-    MainLoop(); 
+    Common_Loop(); 
      wdt_reset();
 }       

@@ -46,20 +46,51 @@ SdFile root;
 #define SDHC_TYPE 3
 #define UNKNOWN_TYPE 4
 
+void SD_Card_Info();
 void SD_Card_Init();
+void SD_Card_Data_Preparation();
+void SD_Card_Header_Preparation();
 
 
-void File_Length(){
-  SD_Card_Init(); 
-    File dataFile = SD.open(LOG_FILE, FILE_READ);
-    if (dataFile) {
-      //dataFile.println(dataString);
-      FileSize.Total = dataFile.size();
+void SD_CardLogTask(){
+  if(!SDCard.LogStatus){ // log of 
+      SDCard.LogStatusInit = 0; // In order to start with the header next time
+      return;
+  }
+    if(!SDCard.LogStatusInit){
+      SDCard.LogStatusInit = 1;
+      // put header + data           
+         SD_Card_Info();
+         SD_Card_Init();            
+         dataString ="";
+         SD_Card_Header_Preparation();dataString += "\n";         
+          SD_Card_Data_Preparation();         
     }
-    dataFile.close(); 
-     Serial.print("File Size Init:"); //  2020,07,07,01,05,40
-      Serial.println(FileSize.Total); // 2020,07,07,01,05,40
+    else{ // put  only data          
+        SD_Card_Init();                  
+        dataString ="";  
+        SD_Card_Data_Preparation();                                
+    }   
+
+
+    
+    File dataFile = SD.open(LOG_FILE, FILE_WRITE);
+    // if the file is available, write to it:
+    if (dataFile) {
+      dataFile.println(dataString);
+      FileSize.Total = dataFile.size();  
+      dataFile.close();
+      // print to the serial port too:
+      Serial.print("Data2 csv File:    ");
+      Serial.println(dataString);  
+    }      
+  else {  
+      Serial.print("error opening : "); 
+      Serial.println(LOG_FILE);    
+      FileSize.Total = 0;
+    }
 }
+
 
 void SD_Card_Info(void){
   Serial.print("\nInitializing SD card...");
@@ -76,9 +107,7 @@ void SD_Card_Info(void){
 
     //while (1);
   } else {
-    Serial.println("Wiring is correct and a card is present.");
-    
-  
+    //Serial.println("Wiring is correct and a card is present."); 
     // print the type of card
     Serial.println();
     Serial.print("Card type:         ");
@@ -144,20 +173,6 @@ void SD_Card_Info(void){
   }
  // File_Length();
 }
-void SD_Create_File(void){
-
-  if (SD.exists("AD_Logfile.txt")) {
-    Serial.println("AD_Logfile.txt exists.");
-  } else {
-    Serial.println("AD_Logfile.txt doesn't exist. Creating");
-    logfile = SD.open("AD_Logfile.txt", FILE_WRITE);
-    logfile.close();
-     if (SD.exists("AD_Logfile.txt")) 
-     Serial.println("AD_Logfile.txt exists.");   
-     else
-     Serial.println("Cannot Create File!!"); 
-  }
-}
 
 void SD_Card_Init(){
   // see if the card is present and can be initialized:
@@ -181,29 +196,14 @@ void SD_Card_Init(){
       case 0 :SD_TypeString ="Card Problem    !";//no card   
       default: //SD_Card_Reset = OFF;//unknown  
       break;     
-    }
-     
+    }    
 }
-/*
-void SD_CardLogTask(void){
-     if (LogPause)SD_Log_File();
-     else SD_Info_Only();        
-}
-*/
-/*
-void SD_Info_Only(){
-      if(SD_KartStop == OFF){
-        SD_KartStop = ON;
-        SD_Card_Info();
-        SD_Card_Init();
-      } 
-}
-*/
+
 void SD_Card_Header_Preparation(){
           //    dataString = "Year,Month,Date,Hour,Min,Sec,WindRaw,velReading,WindMPH,WindTemp,TemperatureSi072,Humidity,Pressure(hPa),";
         //    dataString += "TemperatureBMP,Altitude(m),Luminosity,Acc.(x),Acc.(y),Acc.(z),Gyro(x),Gyro(y),Gyro(z)";  
         
-        dataString += "Dev_Id:" + EE_Id_EString + ',' + "SD Type: " + SD_TypeString + ',' + "Volume: " +String(SD_Volume) + " GB" + ',' +
+        dataString += "FirmVers " + FW_Version +  ",Dev_Id:" + EE_Id_EString + ',' + "SD Type: " + SD_TypeString + ',' + "Volume: " +String(SD_Volume) + " GB" + ',' +
         
        "Found Sensors Id's:"  +  ','  + Sensor1_Id +  ',' +  Sensor2_Id + ','  + Sensor3_Id + ','  +  "PMsensor Rev"  + ',' +  Sensor_Info_SDS  +  ','  +  "\n";
         
@@ -292,108 +292,7 @@ void SD_Card_Data_Preparation(){
   
 }
 
-void SD_CardLogTask(){
-  //deBugString = "Start.....";
-    deBugString = "SDCLgTsk_1";
-  /*
-  if(SDCard.Status == SD_NOT_Present){
-      SD_Card_Info();
-      SD_Card_Init();
-  }
-    */
-  if(SDCard.LogStatus){ // log on
-    if(!SDCard.LogStatusInit){
-      SDCard.LogStatusInit = 1;
-      // put header + data
-            SD_Card_Info();
-            SD_Card_Init();
-            
-            dataString ="";
-            SD_Card_Header_Preparation();dataString += "\n";
-            
-            SD_Card_Data_Preparation();         
-    }
-    else{ // put  only data  
-          deBugString = "SDCLgTsk_2";
-        SD_Card_Init();   
-          deBugString = "SDCLgTsk_3";
-          
-        dataString ="";  
-        SD_Card_Data_Preparation();
-        
-          deBugString = "SDCLgTsk_4";                  
-    }
-    deBugString = "SDCLgTsk_5";
-    File dataFile = SD.open(LOG_FILE, FILE_WRITE);
-    // if the file is available, write to it:
-    deBugString = "SDCLgTsk_6";    
-    if (dataFile) {
-      dataFile.println(dataString);
-      FileSize.Total = dataFile.size();
-/*
 
-      
-      Serial.print("File Size:"); //  2020,07,07,01,05,40
-      Serial.println(FileSize.Total); // 2020,07,07,01,05,40 
-
-     unsigned long Remain;
-
-#define KBYTES 1000        //1000
-#define MBYTES 1000000     //1000.1000  Remain unsigned int 
-#define GBYTES 1000000000 // 1000.1000.1000   Remain long
-
-
-  
-      if(FileSize.Total < KBYTES) {
-        Serial.print(FileSize.Total); 
-        Serial.print(" Bytes"); 
-      } 
-      else if(FileSize.Total < MBYTES) {   
-        Serial.print(FileSize.Total/KBYTES); 
-        Serial.print(".");
-        Remain = (FileSize.Total%KBYTES);       
-        if (Remain<100) Serial.print("0"); // leading zero for minutes
-        if (Remain<10) Serial.print("0"); // leading zero for minutes
-        Serial.print(Remain); 
-        Serial.print(" Kbytes");        
-       }  
-      else if(FileSize.Total < GBYTES){
-        Serial.print(FileSize.Total/MBYTES); 
-        Serial.print("."); 
-        Serial.print((FileSize.Total%MBYTES)/10000 ); //2 digits     //  xxx.xx Mbytes      999.999
-        Serial.print(" Mbytes");        
-      } 
-      else {
-       Serial.print(FileSize.Total/GBYTES); 
-       Serial.print("."); 
-       Serial.print((FileSize.Total%GBYTES)/10000000 ); // 2 digits     //  xxx.xx Gbytes      999.999
-       Serial.print(" GBytes");  
-      }     
-
-      Serial.println(); // 2020,07,07,01,05,40 
-      
-      */  
-       
-      dataFile.close();
-      // print to the serial port too:
-      Serial.print("Data2 csv File:    ");
-      Serial.println(dataString);
-     
-    }      
-    // if the file isn't open, pop up an error:
-  else {
-    //  Serial.println("error opening datalog.txt");
-      Serial.print("error opening : "); 
-      Serial.println(LOG_FILE);    
-      FileSize.Total = 0;
-    }
-    deBugString = "SDCLgTsk_7";   
-  }
-  else{    // log off
-    SDCard.LogStatusInit = 0;
-  }
-  deBugString = "SDCLgTsk_8";
-}
 
 
 /*
@@ -489,5 +388,20 @@ void SD_Create_File(void){
 
    logfile.println("millis,stamp,datetime,light,temp,vcc");  
  
+}
+/*
+void SD_Create_File(void){
+
+  if (SD.exists("AD_Logfile.txt")) {
+    Serial.println("AD_Logfile.txt exists.");
+  } else {
+    Serial.println("AD_Logfile.txt doesn't exist. Creating");
+    logfile = SD.open("AD_Logfile.txt", FILE_WRITE);
+    logfile.close();
+     if (SD.exists("AD_Logfile.txt")) 
+     Serial.println("AD_Logfile.txt exists.");   
+     else
+     Serial.println("Cannot Create File!!"); 
+  }
 }
 */

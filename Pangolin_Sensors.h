@@ -24,9 +24,14 @@
 // https://www.sparkfun.com/products/14685      //I2c multiplexer
 // https://www.sparkfun.com/products/14589      // I2c sigle ended 2 diffrential 
 // https://cdn.sparkfun.com/assets/c/4/7/0/9/SparkFun_Differential_I2C_Breakout_PCA9615_Qwiic.pdf
+/*
+int rxPin = 19;
+int txPin = 18;
+SdsDustSensor sds(rxPin, txPin);
+*/
+//SdsDustSensor sds(Serial1); // passing HardwareSerial& as parameter
+//SdsDustSensor sds(HardwareSerial); // passing HardwareSerial& as parameter
 
-
-SdsDustSensor sds(Serial1); // passing HardwareSerial& as parameter
 
 Adafruit_Si7021 THsensor = Adafruit_Si7021();
 
@@ -90,6 +95,7 @@ void Sensors_PeripInit(void){
 
 
   #ifdef PM25_DUST_SENSOR_EXISTS 
+        /*
           sds.begin(); // this line will begin Serial1 with given baud rate (9600 by default)
 
 
@@ -104,7 +110,9 @@ void Sensors_PeripInit(void){
          //   sds.wakeup();
     #else
             Serial.println("No PM25 Sensor!!");
+          */   
   #endif  
+ 
 }
 
 
@@ -189,17 +197,17 @@ void SensorInit_Si072(byte Channel){
     switch(Channel){
       case NO_IC2_MULTIPLEXER:
       case SI072_FIRST_SENSOR:
-            Sensor1_Id = String(THsensor.sernum_a, HEX) + String(THsensor.sernum_b,HEX); 
+            Sensor1_Id = String(THsensor.sernum_a, HEX) ;//+ String(THsensor.sernum_b,HEX); 
             Sensor1_Id.toUpperCase();     
             Serial.println(Sensor1_Id);
        break;
       case SI072_SECOND_SENSOR:
-            Sensor2_Id = String(THsensor.sernum_a, HEX) + String(THsensor.sernum_b,HEX);
+            Sensor2_Id = String(THsensor.sernum_a, HEX);// + String(THsensor.sernum_b,HEX);
             Sensor2_Id.toUpperCase();        
             Serial.println(Sensor2_Id);
        break;
       case SI072_THIRD_SENSOR: 
-            Sensor3_Id = String(THsensor.sernum_a, HEX) + String(THsensor.sernum_b,HEX);
+            Sensor3_Id = String(THsensor.sernum_a, HEX);// + String(THsensor.sernum_b,HEX);
             Sensor3_Id.toUpperCase();        
              Serial.println(Sensor3_Id);
        break; 
