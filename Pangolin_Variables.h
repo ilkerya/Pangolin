@@ -78,6 +78,8 @@ bool DispExpSens1 =0;
 bool DispExpSens2 =0;
 bool DispExpSens3 =0;
 
+bool SensorRollKey = 0;
+byte SensorRollTimer = 0;
 
 byte KeyBoardTimeOut = 0;
 bool KeyBoardTimeOutEnb = 0;

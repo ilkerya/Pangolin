@@ -72,6 +72,7 @@ const long blinkInterval = 500;
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Variables.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_RTC.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_SDCard.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_UI.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Display.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Sensors.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Functions.h"

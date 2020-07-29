@@ -318,15 +318,38 @@ void LogEnable(bool Enable) {
 }
 
 
+
+
 void  DispExtTimeout(void) {
   if (OLED_Timer <= KEYDISP_TIMER) OLED_Timer = KEYDISP_TIMER;
+}
+void UpdateInfoQue(void){
+     DispRollIndex[3] = DispRollIndex[2];
+     DispRollIndex[2] = DispRollIndex[1];
+     DispRollIndex[1] = DispRollIndex[0];
+     DispRollIndex[0]++;
+     if (DispRollIndex[0]  > 7) DispRollIndex[0] = 1;
+}
+void UpdateDispRoll(void){
+    if(SensorRollTimer){
+      SensorRollTimer--;
+      return;
+    }
+    UpdateInfoQue();
+
+}
+void KeySensonsorRoll(){
+      SensorRollTimer = 20;
+      UpdateInfoQue();      
 }
 
 void DownMenuKey(void) {
   if (OLED_Timer == 0) return;
   DispExtTimeout();
   switch (Menu) {
-    case MENU_NULL : Menu = MENU_NULL;
+    case MENU_NULL :// Menu = MENU_NULL;
+            KeySensonsorRoll();
+    
       break;
     case MENU1 : Menu = MENU3; //
       break;
@@ -543,13 +566,7 @@ void EnterMenuKey(void) {
 
   }
 }
-void UpdateDispRoll(void){
-     DispRollIndex[3] = DispRollIndex[2];
-     DispRollIndex[2] = DispRollIndex[1];
-     DispRollIndex[1] = DispRollIndex[0];
-     DispRollIndex[0]++;
-     if (DispRollIndex[0]  > 7) DispRollIndex[0] = 1;
-}
+
 
 void EE_SerNoWrite2_EE(unsigned int SerialNo) {
   //  EEPROM.write(Adr, byte);

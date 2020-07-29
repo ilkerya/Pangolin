@@ -119,6 +119,9 @@ void EE_SerNoWrite2_EE(unsigned int SerialNo);
 void UpdateDeviceEE();
 void UpdateInfoLine();
 void UpdateDisplayMenu();
+void UpdateSD_LogTime();
+void UpdateFileSize();
+void UpdateProperLine(byte Index, byte Line);
 
 void EscMenuKey(void);
 void EnterMenuKey(void);
