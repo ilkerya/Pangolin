@@ -720,12 +720,12 @@ void MicroInit() {
 #ifdef ARDUINO_MEGA
   ADCSRA &= ~ (1 << ADEN);            // turn off ADC to save power ,, enable when needed and turn off again
 #endif
-
-  FW_Version = String (__DATE__)  + ' ' +  String ( __TIME__ ), // 11 1 8 // 20
+      // Aug.03.2020 19:03:33
+  FW_Version = String (__DATE__)  +  String ( __TIME__ ), // 11 1 8 // 20
   //  FW_Version.remove(17,3); // Remove from from index=7 through the end of the string
-  FW_Version.remove(7, 2); // Remove 2 characters starting at index=7
+  FW_Version.remove(7, 4); // Remove 2 characters starting at index=7
   FW_Version.setCharAt(3 , '.');
-  FW_Version.setCharAt(6 , '.');
+ // FW_Version.setCharAt(6 , '.');
 
 
   //Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__);

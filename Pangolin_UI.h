@@ -132,13 +132,13 @@ void UpdateProperLine(byte Index, byte Line){
     switch(Index){
       case 0: //// show nothing                 
       break;    
-      case 1: str = "FW " + FW_Version;  // fw version compile time             
+      case 1: str = "1. FW " + FW_Version;  // fw version compile time             
       break;
-      case 2: str += "Dev Id:  " + EE_Id_EString;  // device id           
+      case 2: str += "2. Dev Id: " + EE_Id_EString;  // device id           
       break;
       case 3:  //   str = myName();   
       //     str =  UpdateTempHumSensor(1, Values.TemperatureSi072_Ch1, Values.Humidity_Ch1);         
-            str = "1."; // temp sensor1              1.   " + Sensor1_Id;
+            str = "3."; // temp sensor1              1.   " + Sensor1_Id;
           if (!isnan(Values.TemperatureSi072_Ch1)) {
             str += String(Values.TemperatureSi072_Ch1,1);
             str += " C";  DispExpSens1 = ON;                           
@@ -152,7 +152,7 @@ void UpdateProperLine(byte Index, byte Line){
           str += ' ' + Sensor1_Id;
           
      break;
-     case 4: str = "2."; // temp sensor2
+     case 4: str = "4."; // temp sensor2
           if (!isnan(Values.TemperatureSi072_Ch2)) {
             str += String(Values.TemperatureSi072_Ch2,1);
             str += " C";   DispExpSens2 = ON;               //  str += '°'; 
@@ -165,7 +165,7 @@ void UpdateProperLine(byte Index, byte Line){
           else   str +="----";
           str += ' ' + Sensor2_Id;              
      break;
-     case 5: str = "3."; // temp sensor3
+     case 5: str = "5."; // temp sensor3
          if (!isnan(Values.TemperatureSi072_Ch3)) {
             str += String(Values.TemperatureSi072_Ch3,1);
             str += " C";    DispExpSens3 = ON;
@@ -178,11 +178,11 @@ void UpdateProperLine(byte Index, byte Line){
         else   str +="----";   // 10 lines
         str += ' ' + Sensor3_Id;             
      break;
-     case 6:     str += "4. " + String(Mains_Volt) + "V ";
+     case 6:     str += "6. " + String(Mains_Volt) + "V ";
                 str += String(Current_Mains_Rms) + "A ";  
                 // current voltage
      break;      
-     case 7:     str += "5. PM2.5: ";
+     case 7:     str += "7. PM2.5: ";
                   if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
                   else str += String(Values.PM25,0);
                // dust sensor

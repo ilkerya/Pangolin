@@ -63,7 +63,7 @@ const long blinkInterval = 500;
 #include "Adafruit_TSL2591.h"
 #include "Adafruit_BMP3XX.h"
 #include "Arduino_LSM9DS1.h"
-#include "SdsDustSensor.h" // https://github.com/lewapek/sds-dust-sensors-arduino-library
+//#include "SdsDustSensor.h" // https://github.com/lewapek/sds-dust-sensors-arduino-library
 
 
 // C:\Users\Yagciilk\Documents\Arduino\Pangolin
