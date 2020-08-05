@@ -31,7 +31,7 @@
 // MKRZero SD: SDCARD_SS_PIN
 
 //const int chipSelect = 53; // mega old
-const int chipSelect = 10; // mega
+// const int chipSelect = 10; // mega
 //const int chipSelect = 10; // mega CAN BE ANY PIN SINCE ITS SLAVE
 // set up variables using the SD utility library functions:
 Sd2Card card;

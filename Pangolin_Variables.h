@@ -168,6 +168,9 @@ unsigned int AD_Value1;
 unsigned int AD_Value2;
 unsigned int AD_Value3;
 
+#define BUF_LENGTH 60
+byte PMBuffer[BUF_LENGTH];
+
 struct
 {
   float Humidity_Ch1;

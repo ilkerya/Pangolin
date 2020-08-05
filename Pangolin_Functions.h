@@ -177,11 +177,12 @@ void AnalogValRead() {
 }
 
 void SDS_DustSensor(void) {
-#ifdef PM25_DUST_SENSOR_EXISTS
+    #ifdef PM25_DUST_SENSOR_EXISTS
+      SerialPortPMSensor();
 /*
-  PmResult pm = sds.queryPm();
+ // PmResult pm = sds.queryPm();// queay mode
   
-  //   PmResult pm = sds.readPm();
+     PmResult pm = sds.readPm();// active mode
   if (pm.isOk()) {
     Values.PM25 = pm.pm25;
     Values.PM10 = pm.pm10;
@@ -195,7 +196,7 @@ void SDS_DustSensor(void) {
     Serial.print("Pm2.5 Problem: ");
  //   Serial.println(pm.statusToString());
   }
-    */
+   */ 
 #endif
 
 }
@@ -339,7 +340,7 @@ void UpdateDispRoll(void){
 
 }
 void KeySensonsorRoll(){
-      SensorRollTimer = 20;
+      SensorRollTimer = 30; // 2sec x 30 = 60 sec
       UpdateInfoQue();      
 }
 
@@ -661,6 +662,8 @@ void ResetCasePrint() {
 void IO_Settings() {
   pinMode(53, OUTPUT);  // SS Pin high to avoid miscommunication
   digitalWrite(53, HIGH);
+
+  //const int chipSelect = 10; // mega SS for SD Card
 
   pinMode(10, OUTPUT);
   digitalWrite(10, HIGH);

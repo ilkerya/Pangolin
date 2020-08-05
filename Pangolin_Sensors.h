@@ -24,6 +24,9 @@
 // https://www.sparkfun.com/products/14685      //I2c multiplexer
 // https://www.sparkfun.com/products/14589      // I2c sigle ended 2 diffrential 
 // https://cdn.sparkfun.com/assets/c/4/7/0/9/SparkFun_Differential_I2C_Breakout_PCA9615_Qwiic.pdf
+
+// https://cdn.sparkfun.com/assets/parts/1/2/2/7/5/Laser_Dust_Sensor_Control_Protocol_V1.3.pdf
+// https://cdn.sparkfun.com/assets/parts/1/2/2/7/5/SDS021_laser_PM2.5_sensor_specification-V1.0.pdf
 /*
 int rxPin = 19;
 int txPin = 18;
@@ -92,27 +95,69 @@ void Sensors_PeripInit(void){
    #else
     Serial.println("No Accel Gyro_Sensor!!");
   #endif  
-
-
   #ifdef PM25_DUST_SENSOR_EXISTS 
-        /*
-          sds.begin(); // this line will begin Serial1 with given baud rate (9600 by default)
+    Serial1.begin(9600);
+    Serial.print("PMSensor Serial Port Init ");
+   #endif 
 
-
-      //    Sensor_Info_SDS = String(sds.queryFirmwareVersion());
-          Sensor_Info_SDS = sds.queryFirmwareVersion().toString();
-          Serial.println(Sensor_Info_SDS); // prints firmware version
-         //Serial.println(sds.queryFirmwareVersion().toString()); // prints firmware version
-          Serial.println(sds.setQueryReportingMode().toString()); // ensures sensor is in 'query' reporting mode
-          Serial.println(sds.setContinuousWorkingPeriod().toString()); // ensures sensor has continuous working period - default but not recommended
-
-         SDS_DustSensor();
-         //   sds.wakeup();
-    #else
-            Serial.println("No PM25 Sensor!!");
-          */   
-  #endif  
- 
+}
+ // #ifdef PM25_DUST_SENSOR_EXISTS 
+        
+void PrintPMValues(byte PMError, byte PMCount){
+  /*
+      Serial.println();
+      for(int i=0; i<BUF_LENGTH;i++){  
+          Serial.print(i); Serial.print('.'); Serial.print(PMBuffer[i]);Serial.print("    ");
+          if(i==9)Serial.println();  
+          if(i==19)Serial.println();  
+          if(i==29)Serial.println();  
+          if(i==39)Serial.println(); 
+          if(i==49)Serial.println();       
+      }
+      */
+     Serial.println();  
+      Serial.print("PMCount ");Serial.println(PMCount);
+      Serial.print("PM25 ");Serial.println(Values.PM25);
+      Serial.print("PM10 ");Serial.println(Values.PM10);
+      Serial.print("PMError ");Serial.println(PMError);         
+}
+ void SerialPortPMSensor() {
+    byte Rx;
+    byte RxCount=0;
+    unsigned int PM25Val=0;
+    unsigned int PM10Val=0;
+     byte PMError = 0; 
+     byte PMCount = 0; 
+     unsigned char checksum = 32; 
+    if (Serial1.available()) {
+        for(int i=0; i<BUF_LENGTH;i++){   
+          PMBuffer[i] = 0;
+        }   
+        while (Serial1.available()) {
+            Rx = Serial1.read();
+            if(RxCount < BUF_LENGTH)PMBuffer[RxCount] =  Rx; 
+            RxCount++;      
+        }
+        Serial1.flush();      
+        for(int i=0; i<BUF_LENGTH;i++){
+            if(PMBuffer[i] == 0XAA){
+              if(PMBuffer[i+1] == 0XC0){
+                    checksum=(unsigned char)(PMBuffer[i+2]+PMBuffer[i+3]+PMBuffer[i+4]+PMBuffer[i+5]+ PMBuffer[i+6]+PMBuffer[i+7]);                         
+                    if(checksum == PMBuffer[i+8]){ 
+                        PMCount++;  
+                        PM25Val += (256 * PMBuffer[i+3])+PMBuffer[i+2];
+                        PM10Val += (256 * PMBuffer[i+5])+PMBuffer[i+4];                                  
+                    }
+                    else PMError++;  
+              }
+          }       
+      }
+      Values.PM25 =  (float)(PM25Val / PMCount)/10;
+      Values.PM10 =  (float)(PM10Val / PMCount)/10;
+      if(Values.PM25 >= 100)Values.PM25 = 99.9;
+      if(Values.PM10 >= 100)Values.PM25 = 99.9;
+      PrintPMValues(PMError,PMCount);  
+    }
 }
 
 
@@ -412,7 +457,105 @@ void SensorLight_Read(void) {
   Serial.print(F("Luminosity: "));
   Serial.println(Values.Luminosity, DEC);
 }
+//--------------------------------
+void readPMconc(void) {
+/*
+ //   int j=0;
+    int i=0;
+    int checksum = 32768;
+  //  Serial1.begin(9600); //dont do doesnt work!!
+    delay(10);
 
+    for (i=0; i<10; i++){
+        data[i]=0;
+    }
+    start[0]=0;
+    i=0;
+        #ifndef LAB_TEST_DEVICE
+      Serial.print("a");
+      #endif
+
+  #define UART_WAIT 30
+
+    while (Serial1.available()<=0 && i<UART_WAIT){ // code stuck here in while loop
+        delay(1);
+        i++;
+        if(i > UART_WAIT) {
+      UartError++;
+      break;
+    }
+    }
+            #ifndef LAB_TEST_DEVICE
+        Serial.print("b");//Serial.print(i);
+        #endif
+
+    if (Serial1.available()){
+        Serial1.readBytes(start,1);
+        i=0;
+        while (start[0]!=0xAA){
+            Serial1.readBytes(start,1);
+            delay(1);
+            i++;
+             if(i > UART_WAIT) {
+        UartError++;
+        break;
+      }
+        }
+
+          Serial1.readBytes(data,9); //2018.02.14
+
+
+        checksum=(int)data[1]+(int)data[2]+(int)data[3]+(int)data[4]+(int)data[5]+(int)data[6];
+        }
+      // Serial.print("data:");Serial.print(data);
+            #ifndef LAB_TEST_DEVICE
+        Serial.print("c");//Serial.print(i);
+        #endif
+
+    if ((unsigned char)checksum==data[7]){             //chenll,has to change the type before comparing.
+        RawValue.PM25=(((float)data[2])*256+(float)data[1])/10;
+    //    PM10=(((float)data[4])*256+(float)data[3])/10;
+            #ifndef LAB_TEST_DEVICE
+          Serial.print(" PM Ok ");//Serial.print(RawValue.PM25);
+          #endif
+
+        PMSuccess++;
+    }
+    else{
+        PMFail++;
+   //     Serial.print(" PM Fail ");
+    }
+
+
+
+
+#ifdef DEBUG
+    Serial.print("PM :");
+    Serial.print(start[0],HEX);Serial.print(".");
+    Serial.print(data[0],HEX);Serial.print(".");
+    Serial.print(data[1],HEX);Serial.print(".");
+    Serial.print(data[2],HEX);Serial.print(".");
+    Serial.print(data[3],HEX);Serial.print(".");
+    Serial.print(data[4],HEX);Serial.print(".");
+    Serial.print(data[5],HEX);Serial.print(".");
+    Serial.print(data[6],HEX);Serial.print(".");
+    Serial.print(data[7],HEX);Serial.print(".");
+    Serial.print(data[8],HEX);Serial.print(".");
+    Serial.print("//");
+    Serial.print(checksum,HEX);
+
+    if(checksum == data[7]){
+        Serial.print("==");
+    }
+    else{
+        Serial.print("xx");
+    }
+
+    Serial.print(data[7],HEX);
+    Serial.print("//");
+#endif
+*/
+}
 /*
 
 void WindSpeed_Calculation(){

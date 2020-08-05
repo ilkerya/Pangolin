@@ -15,6 +15,7 @@ git add .
 git commit -m "Comment"
 git push https://github.com/ilkerya/Pangolin.git master
 */
+const int chipSelect = 10; // mega SS for SD Card
  #define SI072_FIRST_SENSOR 7  // multiplexer Channel 7 first blu box prot
  #define SI072_SECOND_SENSOR 1 // first prot  0      0
  #define SI072_THIRD_SENSOR 2 // sec1                2 
