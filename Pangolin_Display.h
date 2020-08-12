@@ -132,8 +132,9 @@ void DisplayInit(void){
     pinMode(OLED_GND, OUTPUT);
     digitalWrite(OLED_GND, LOW);       // keep GND Level           
     pinMode(OLED_POWER, OUTPUT);
+    digitalWrite(OLED_POWER, HIGH);       // turn on pullup resistors    
     OLED_Timer = 40; // 20-> 10 sec
-    digitalWrite(OLED_POWER, HIGH);       // turn on pullup resistors
+    delay(300); // Pause for 2 seconds
     
     Serial.println("Display Initing");
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {  //  SSD1306_EXTERNALVCC
