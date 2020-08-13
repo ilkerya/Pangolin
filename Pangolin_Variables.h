@@ -205,9 +205,13 @@ struct
 
 
 #define ADDRES_LOG 8
+#define SLEEP_LOG 16
 void EESetResetLog(bool Mode);
 void EEReadLog(void);
 void EESetSampleTimeLog(byte Sample);
+void EEDisplaySleep(bool Mode);
+
+
 
 
 /*

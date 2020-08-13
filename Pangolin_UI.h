@@ -13,7 +13,7 @@ void UpdateDisplayBuffer(void){
 void UpdateFileSize(){
     String str;unsigned long Remain;unsigned long Remain2;
     str = "    "; //4
-    if( FileSize.Total == 0) str += "                 ";//17 
+    if( FileSize.Total == 0) str += " ";//10
     
       if(FileSize.Total < 100000000)str += ' ';   // 100 Mb     
       if(FileSize.Total < 10000000)str += ' ';   // 10 Mb    

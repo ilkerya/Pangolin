@@ -51,6 +51,24 @@ void SD_Card_Init();
 void SD_Card_Data_Preparation();
 void SD_Card_Header_Preparation();
 
+void GetFileSize(){
+   // SD_Card_Init();
+    File dataFile = SD.open(LOG_FILE, FILE_WRITE);
+    if (dataFile) {
+     // dataFile.println(dataString);
+      FileSize.Total = dataFile.size();  
+      dataFile.close();
+      // print to the serial port too:
+      Serial.print("Data2 csv File:    ");
+      Serial.println(dataString);  
+    }      
+  else {  
+      Serial.print("error opening : "); 
+      Serial.println(LOG_FILE);    
+      FileSize.Total = 0;
+    } 
+}
+
 
 void SD_CardLogTask(){
   if(!SDCard.LogStatus){ // log of 

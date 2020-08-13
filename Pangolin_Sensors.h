@@ -55,7 +55,7 @@ Adafruit_BMP3XX bmp; // I2C  //BAROMETRIC PRESSURE
 void Sensors_PeripInit(void){
   SD_Card_Info();
   SD_Card_Init();
-  DisplayInit();
+  GetFileSize();
   RTC_Init();
 
 

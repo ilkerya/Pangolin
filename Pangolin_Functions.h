@@ -301,10 +301,11 @@ void Key_Functions(void) {
 }
 
 
-void DispEnable(bool Enable) {
+void DispEnable(bool Enable, byte Timer) {
   if (Enable == ON) {
     DisplaySleepEnable = ON; //go sleep
-    OLED_Timer = 20;
+    //OLED_Timer = 20;
+    OLED_Timer = Timer;
   }
   else   DisplaySleepEnable = OFF;    // no sleep
 }
@@ -555,16 +556,13 @@ void EnterMenuKey(void) {
     case MENU2_SUB7 :  SampleTime = TASK_60SEC; EESetSampleTimeLog(TASK_60SEC);
       Menu =  MENU_NULL;//MENU2;//
       break;
-    case MENU3_SUB1 :  DispEnable(ON);
+    case MENU3_SUB1 :  DispEnable(ON,20);EEDisplaySleep(ON);
       Menu =  MENU_NULL;//MENU3
       break;
-    case MENU3_SUB2 :  DispEnable(OFF);
+    case MENU3_SUB2 :  DispEnable(OFF,0);EEDisplaySleep(OFF);
       Menu =  MENU_NULL;//MENU3
       break;
-
-
     default: Menu = MENU_NULL;
-
   }
 }
 
@@ -579,6 +577,17 @@ void EE_SerNoWrite2_EE(unsigned int SerialNo) {
   EEPROM.write(5, t);// high byte
 
 }
+void EEDisplaySleepRead(void) {
+    byte Mode = EEPROM.read(SLEEP_LOG);// OFF
+    if(Mode == OFF)DispEnable(OFF,0);
+    if(Mode == ON)DispEnable(ON,100);    
+}
+
+void EEDisplaySleep(bool Mode) {
+    if (Mode == OFF)EEPROM.write(SLEEP_LOG, OFF); // OFF
+    else EEPROM.write(SLEEP_LOG, ON);// ON
+}
+
 
 void EESetResetLog(bool Mode) {
   if (Mode == OFF)EEPROM.write(ADDRES_LOG, OFF); // OFF
@@ -692,10 +701,12 @@ void MicroInit() {
   Serial.begin(115200);
 
   IO_Settings();
+  DisplaySetPowerIO();
 
   ResetCasePrint();
 
   //  SDCard.LogStatus = 0;      // default start with log off;
+  EEDisplaySleepRead();
   EEReadLog();
   SDCard.LogStatusInit = 0;  // put the header of the csv file
 
@@ -703,8 +714,8 @@ void MicroInit() {
   Serial.print(SDCard.LogStatus);
   Serial.print("    SampleTime: ");
   Serial.println(SampleTime);
-
-
+  Serial.print("    DisplaySleep: ");
+  Serial.println(DisplaySleepEnable);
 
 
   //wdt_enable(WDT0_1S);
@@ -754,6 +765,9 @@ void MicroInit() {
 
 #ifndef DEBUG_SIMULATOR_MODE
   Sensors_PeripInit();
+  //UpdateDisplayBuffer();
+    DisplayInit();
+    
 #endif
 
 

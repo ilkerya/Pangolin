@@ -5,7 +5,7 @@
  //for setting date&time open arduino serial monitor and send the data stream
  //   Year,Month,Date,Hour,Minute;Second
  //   2020,05,27,21,14,23
- //  2020,07,07,19,00,50
+ //  2020,08,13,01,21,10
  // EEEEf567 
  // 115200 baud Both NL & CR
  // put leading zero for numbers less than 10
@@ -96,6 +96,7 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
 
 void setup() {
   MicroInit();
+//  if(DisplayInitDelay == OFF)DisplayInitDelay = ON;  
 }
 
 #ifdef ARDUINO_DUE

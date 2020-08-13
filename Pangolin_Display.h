@@ -98,19 +98,23 @@ In the example ssd1306_128x64_i2c
 //DISPLAY INITIALIZER
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 void Display_SwitchOff(){
-      digitalWrite(OLED_POWER, LOW);       // turn on pullup resistors
-      digitalWrite(OLED_GND, LOW);       // keep GND Level   
-      Menu = MENU_NULL;       
+     // digitalWrite(OLED_POWER, LOW);       // turn on pullup resistors
+     // digitalWrite(OLED_GND, LOW);       // keep GND Level   
+      Menu = MENU_NULL;    
+      display.clearDisplay(); 
+      display.display();  
 }
-
-void Display_ReInit(byte Timer){
-    pinMode(OLED_GND, OUTPUT); 
+void DisplaySetPowerIO(){
+     //-- DISPLAY INIT --//
+    pinMode(OLED_GND, OUTPUT);
+    digitalWrite(OLED_GND, LOW);       // keep GND Level           
     pinMode(OLED_POWER, OUTPUT);
+    digitalWrite(OLED_POWER, HIGH);       // turn on pullup resistors    
+}
+void Display_ReInit(byte Timer){
+    DisplaySetPowerIO();
     OLED_Timer = Timer; // 10 sec
-    digitalWrite(OLED_POWER, HIGH);       // 
-    digitalWrite(OLED_GND, LOW);       //  
-
-    
+  //  delay(300); // Pause for 2 seconds 
     if(!display.begin(SSD1306_SWITCHCAPVCC)) {  //    SSD1306_EXTERNALVCC
         Serial.println("SSD1306 allocation failed");
             //for(;;); // Don’t proceed, loop forever
@@ -127,12 +131,11 @@ void Display_ReInit(byte Timer){
  //   display.display();
 }
 
+ 
+
 void DisplayInit(void){
-    //-- DISPLAY INIT --//
-    pinMode(OLED_GND, OUTPUT);
-    digitalWrite(OLED_GND, LOW);       // keep GND Level           
-    pinMode(OLED_POWER, OUTPUT);
-    digitalWrite(OLED_POWER, HIGH);       // turn on pullup resistors    
+    DisplaySetPowerIO();
+    //-- DISPLAY INIT --//    
     OLED_Timer = 40; // 20-> 10 sec
     delay(300); // Pause for 2 seconds
     
