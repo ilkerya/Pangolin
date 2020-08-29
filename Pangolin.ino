@@ -12,61 +12,18 @@
 
  //*********************************************************************
  
- // #define DEBUG_SIMULATOR_MODE // For DEbugging As A Simulator
- 
+
+
+#define ARM_MATH_CM0PLUS
+
  #define ARDUINO_MEGA // 8 bit AVR
  //#define ARDUINO_DUE // ARM Cortex M3
 
-#include <SPI.h>
+//#include <Wire.h>
+//#include <SPI.h>
 #include <SD.h>
 #include <EEPROM.h>
 #include <avr/wdt.h>
-
-/*
-///  ADE9153A INIT
-#define ARM_MATH_CM0PLUS
-#include  <ADE9153A.h>
-#include <ADE9153AAPI.h>
-// Basic initializations 
-#define SPI_SPEED 1000000     //SPI Speed
-#define CS_PIN 8              //8-->Arduino Zero. 15-->ESP8266 
-#define ADE9153A_RESET_PIN 4  //On-board Reset Pin
-#define USER_INPUT 5          //On-board User Input Button Pin
-#define LED 6                 //On-board LED pin
-ADE9153AClass ade9153A;
-
-struct EnergyRegs energyVals;  //Energy register values are read and stored in EnergyRegs structure
-struct PowerRegs powerVals;    //Metrology data can be accessed from these structures
-struct RMSRegs rmsVals;  
-struct PQRegs pqVals;
-struct AcalRegs acalVals;
-struct Temperature tempVal;
-
-void readandwrite(void);
-void resetADE9153A(void);
-
-int ledState = LOW;
-int inputState = LOW;
-unsigned long lastReport = 0;
-const long reportInterval = 2000;
-const long blinkInterval = 500;
-*/
-///  ADE9153A END
-// C:\Projects\Pangolin\..   Atmel Studio Project Path
-// C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths    
-#include "RTClib.h"
-
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-
-#include "Adafruit_Si7021.h"
-#include "Adafruit_TSL2591.h"
-#include "Adafruit_BMP3XX.h"
-#include "Arduino_LSM9DS1.h"
-//#include "SdsDustSensor.h" // https://github.com/lewapek/sds-dust-sensors-arduino-library
-
-
-// C:\Users\Yagciilk\Documents\Arduino\Pangolin
 
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Def.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Variables.h"
@@ -75,7 +32,11 @@ const long blinkInterval = 500;
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_UI.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Display.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Sensors.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_ADE9153.h"
 #include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Functions.h"
+
+// C:\Projects\Pangolin\..   Atmel Studio Project Path
+// C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths   
 
 #ifdef ARDUINO_DUE
 void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
@@ -92,6 +53,7 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
   NVIC_EnableIRQ(irq);
 }
 #endif
+
 
 
 void setup() {
@@ -151,7 +113,7 @@ void TC3_Handler(){
     if(IntTimer2 >= 100){ // 2 sec
       IntTimer2 = 0;
       LoopTask_2Sec = ON;
-      PrintDisplayBuffer();
+      //PrintDisplayBuffer();
     }
     if(IntTimer5 >= 250){  // 5 sec
       IntTimer5 = 0;
@@ -177,4 +139,5 @@ void TC3_Handler(){
 void loop() {
     Common_Loop(); 
      wdt_reset();
+     wdt_enable(WDTO_8S);
 }       

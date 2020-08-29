@@ -2,7 +2,12 @@
 // https://www.onlinegdb.com/edit/Hkmlxi_08
 
 
-
+void Log_Data_Write_SD(){
+     #ifdef AD9153_PROTOTYPE
+        AD_Loop();
+      #endif
+      SD_CardLogTask(); // Data 2 SD card Write
+}
 
 void Common_Loop(){
   
@@ -33,7 +38,7 @@ void Common_Loop(){
   }
   if (LoopTask_500msec) {
     LoopTask_500msec = OFF;
-    if (SampleTime == TASK_500MSEC) SD_CardLogTask();
+    if (SampleTime == TASK_500MSEC) Log_Data_Write_SD();
   }
 
   if (LoopTask_1Sec) {
@@ -78,23 +83,28 @@ void Common_Loop(){
 
     KeyTimeOutCheck();
 
-    if (SampleTime == TASK_1SEC) SD_CardLogTask();
+    if (SampleTime == TASK_1SEC) Log_Data_Write_SD();
 
 
   }
   
   if (LoopTask_2Sec) {
     LoopTask_2Sec = OFF;
-    if (SampleTime == TASK_2SEC) SD_CardLogTask();
+    if (SampleTime == TASK_2SEC) Log_Data_Write_SD();
 
       UpdateDispRoll();
+      PrintDisplayBuffer();
 
   }
   if (LoopTask_5Sec) {
     LoopTask_5Sec = OFF;
-    if (SampleTime == TASK_5SEC) SD_CardLogTask();
+    if (SampleTime == TASK_5SEC) Log_Data_Write_SD();
 
-    SDS_DustSensor();
+      #ifdef PM25_DUST_SENSOR_EXISTS  
+          SDS_DustSensor();
+      #endif
+      
+
 
     DisplayValueTimer++;
     if (DisplayValueTimer > 4)DisplayValueTimer = 0;
@@ -102,17 +112,17 @@ void Common_Loop(){
   }
   if (LoopTask_10Sec) {
     LoopTask_10Sec = OFF;
-    if (SampleTime == TASK_10SEC) SD_CardLogTask();
+    if (SampleTime == TASK_10SEC) Log_Data_Write_SD();
 
   }
   if (LoopTask_20Sec) {
     LoopTask_20Sec = OFF;
-    if (SampleTime == TASK_20SEC) SD_CardLogTask();
+    if (SampleTime == TASK_20SEC) Log_Data_Write_SD();
 
   }
   if (LoopTask_60Sec) {
     LoopTask_60Sec = OFF;
-    if (SampleTime == TASK_60SEC) SD_CardLogTask();
+    if (SampleTime == TASK_60SEC) Log_Data_Write_SD();
 
   }
   
@@ -318,8 +328,6 @@ void LogEnable(bool Enable) {
     }
   */
 }
-
-
 
 
 void  DispExtTimeout(void) {
@@ -669,17 +677,30 @@ void ResetCasePrint() {
   MCUSR = 0x00;
 }
 void IO_Settings() {
-  pinMode(53, OUTPUT);  // SS Pin high to avoid miscommunication
-  digitalWrite(53, HIGH);
 
-  //const int chipSelect = 10; // mega SS for SD Card
 
-  pinMode(10, OUTPUT);
-  digitalWrite(10, HIGH);
+#ifdef FIRST_PROTOTYPE
 
+#endif
+#ifdef AD9153_PROTOTYPE
   pinMode(4, OUTPUT);  // ADE9153A_RESET_PIN
   digitalWrite(4, HIGH);
-
+  pinMode(8, OUTPUT);  // ADE9153A_SPI_SS_PIN
+  digitalWrite(8, HIGH);
+  pinMode(2, INPUT);  // ADE9153A_ZX_DREADY_PIN
+  pinMode(3, INPUT);  // ADE9153A_IRQ_PIN
+  pinMode(5, INPUT);  // ADE9153A_USER_BUTTON 
+  
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
+   
+#endif
+  pinMode(53, OUTPUT);  // SS Pin high to avoid miscommunication
+  digitalWrite(53, HIGH);
+  //const int chipSelect = 10; // mega SS for SD Card
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH);
   pinMode(LED_GREEN, OUTPUT);           // set pin to input
   digitalWrite(LED_GREEN, LOW);       // turn on pullup resistors
   pinMode(LED_RED, OUTPUT);           // set pin to input
@@ -765,8 +786,7 @@ void MicroInit() {
 
 #ifndef DEBUG_SIMULATOR_MODE
   Sensors_PeripInit();
-  //UpdateDisplayBuffer();
-    DisplayInit();
+  DisplayInit();
     
 #endif
 
@@ -789,5 +809,8 @@ void MicroInit() {
 #ifdef ARDUINO_DUE
   startTimer(TC1, 0, TC3_IRQn, 64); //TC1 channel 0, the IRQ for that channel and the desired frequency
 #endif
-
+    #ifdef AD9153_PROTOTYPE
+  ADsetup();
+  #endif  
+  
 }

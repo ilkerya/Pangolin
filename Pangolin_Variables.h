@@ -1,4 +1,39 @@
+#ifdef AD9153_PROTOTYPE
 
+#include  <ADE9153A.h>
+#include <ADE9153AAPI.h>
+
+
+int ledState = LOW;
+int inputState = LOW;
+unsigned long lastReport = 0;
+const long reportInterval = 2000;
+const long blinkInterval = 500;
+
+////* Basic initializations */
+#define SPI_SPEED 1000000     //SPI Speed
+#define CS_PIN 8              //8-->Arduino Zero. 15-->ESP8266 
+#define ADE9153A_RESET_PIN 4  //On-board Reset Pin
+#define USER_INPUT 5          //On-board User Input Button Pin
+#define LED 6                 //On-board LED pin
+ADE9153AClass ade9153A;
+//ADE9153AClass cc;
+//SetupADE9153A
+
+//ADE9153AClass ade9153A = ADE9153AClass();
+//ADE9153AClass ade9153A = SetupADE9153A();
+
+struct EnergyRegs energyVals;  //Energy register values are read and stored in EnergyRegs structure
+struct PowerRegs powerVals;    //Metrology data can be accessed from these structures
+struct RMSRegs rmsVals;  
+struct PQRegs pqVals;
+struct AcalRegs acalVals;
+struct Temperature tempVal;
+
+void readandwrite(void);
+void resetADE9153A(void);
+
+#endif  
 
 
 // so variables
@@ -15,6 +50,16 @@ String FW_Version ="" ;
 byte Menu =0;
 unsigned int SerialCode =0;
 byte DispRollIndex[4] = {1,0,0,0};
+//2 1 0 0
+//3 2 1 0
+//4 3 2 1
+//5 4 3 2
+//6 5 4 3
+//7 6 5 4
+//1 7 6 5
+//2 1 7 6
+//3 2 1 7
+//4 3 2 1
 
 unsigned int KeyLogger=0;
 

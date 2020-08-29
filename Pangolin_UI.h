@@ -1,3 +1,4 @@
+
 void UpdateDisplayBuffer(void){  
     Display_Line1 = String(Str_Date) + "   " + String(Str_Time);
     UpdateSD_LogTime();// Line2
@@ -178,14 +179,37 @@ void UpdateProperLine(byte Index, byte Line){
         else   str +="----";   // 10 lines
         str += ' ' + Sensor3_Id;             
      break;
-     case 6:     str += "6. " + String(Mains_Volt) + "V ";
+     case 6:       
+              #ifdef VOLTAGE_MEASURE_EXISTS
+                str += "6. " + String(Mains_Volt) + "V ";  
+             #endif
+             #ifdef LEM_CURRENT_EXISTS               
                 str += String(Current_Mains_Rms) + "A ";  
-                // current voltage
+            #endif
+
+             #ifdef AD9153_PROTOTYPE 
+              str += "6. " +String(rmsVals.CurrentRMSValue/1000)+ "A "; // 3/4/2
+              str +=String((unsigned int)(rmsVals.VoltageRMSValue/1000))+ "V "; //4/2  
+              if((rmsVals.VoltageRMSValue/1000) > 32) {
+               // str += String((byte)pqVals.FrequencyValue)+ "Hz"; //4
+                str += String(pqVals.FrequencyValue)+ "Hz"; //4
+              }
+              else  str += "--Hz"; //4
+            #endif 
      break;      
-     case 7:     str += "7. PM2.5: ";
+     case 7:    
+            #ifdef PM25_DUST_SENSOR_EXISTS  
+                str += "7. PM2.5: ";
                   if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
                   else str += String(Values.PM25,0);
-               // dust sensor
+            #endif 
+             #ifdef AD9153_PROTOTYPE 
+              str += "7. " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
+              str += "PF " + String(pqVals.PowerFactorValue)+ " ";  // 3/4/1 
+               
+            #endif 
+
+                 
      break;     
     default: str = "default";
     break; 

@@ -2,24 +2,26 @@
 //https://github.com/adafruit/Adafruit_SSD1306
 
 // https://upload.wikimedia.org/wikipedia/commons/f/f8/Codepage-437.png
-/*
-#define OLED_CS    48// 13
-#define OLED_RESET 46
-#define OLED_DC    44// 12  // common 50
-#define OLED_CLK   42 //13 // common  52
-#define OLED_MOSI  40// 11 //common 51
-*/
 
+#ifdef FIRST_PROTOTYPE
+  #define OLED_GND 46// 13
+  #define OLED_POWER 44// 13
+  #define OLED_CS    40// 13
+  #define OLED_RESET 38
+  #define OLED_DC    36// 12  // common 50
+  #define OLED_CLK   34 //13 // common  52
+  #define OLED_MOSI  32// 11 //common 51
+#endif
+#ifdef AD9153_PROTOTYPE
+  #define OLED_GND 37// 13
+  #define OLED_POWER 35// 13
+  #define OLED_CS    31// 13
+  #define OLED_RESET 29
+  #define OLED_DC    27// 12  // common 50
+  #define OLED_CLK   25 //13 // common  52
+  #define OLED_MOSI  23// 11 //common 51
+#endif
 
-#define OLED_GND 46// 13
-#define OLED_POWER 44// 13
-
-
-#define OLED_CS    40// 13
-#define OLED_RESET 38
-#define OLED_DC    36// 12  // common 50
-#define OLED_CLK   34 //13 // common  52
-#define OLED_MOSI  32// 11 //common 51
 
 /*
 #define OLED_CS    A0
@@ -28,31 +30,6 @@
 #define OLED_CLK   A3
 #define OLED_MOSI  A4
 */
-
-
-/*
-#define OLED_GND 45// 13
-#define OLED_POWER 43// 13
-#define OLED_CS    39// 13
-#define OLED_RESET 37
-#define OLED_DC    35// 12  // common 50
-#define OLED_CLK   33 //13 // common  52
-#define OLED_MOSI  31// 11 //common 51
-*/
-
-
-   // pinMode(OLED_POWER, OUTPUT);
-    //pinMode(8, OUTPUT);
-    //pinMode(9, OUTPUT);
-/*
-#define OLED_CS    34// 13
-#define OLED_RESET 36
-#define OLED_DC    38// 12  // common 50
-#define OLED_CLK   40 //13 // common  52
-#define OLED_MOSI  42// 11 //common 51
-*/
-
-
 
 
 #define NUMFLAKES 10
@@ -78,7 +55,7 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
   B01111100, B11110000,
   B01110000, B01110000,
   B00000000, B00110000 };
-
+ 
   /*
  * In Adafruit_SSD1306.h
  * 1. uncomment #define SSD1306_128_64

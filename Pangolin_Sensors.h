@@ -1,7 +1,5 @@
 
 
-
-
 #define TCAADDR 0x70  //  
 //#define CHANNEL_VOC 2 //  
 #define CHANNEL_TEMPHUM 7  // 0x40 default address 
@@ -35,19 +33,26 @@ SdsDustSensor sds(rxPin, txPin);
 //SdsDustSensor sds(Serial1); // passing HardwareSerial& as parameter
 //SdsDustSensor sds(HardwareSerial); // passing HardwareSerial& as parameter
 
+#ifdef TEMP_HUM_1_SENSOR_EXISTS  //TEMP_HUM_2_SENSOR_EXISTS TEMP_HUM_3_SENSOR_EXISTS
+  #include "Adafruit_Si7021.h"
+  Adafruit_Si7021 THsensor = Adafruit_Si7021();
+#endif
 
-Adafruit_Si7021 THsensor = Adafruit_Si7021();
+#ifdef LIGHT_SENSOR_EXISTS  
+  #include "Adafruit_TSL2591.h"
+  Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591); // pass in a number for the sensor identifier (for your use later)
+#endif
 
-Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591); // pass in a number for the sensor identifier (for your use later)
+#ifdef BAR_PRES_SENSOR_EXISTS 
+  #include "Adafruit_BMP3XX.h"
+  #define SEALEVELPRESSURE_HPA (1013.25)
+  Adafruit_BMP3XX bmp; // I2C  //BAROMETRIC PRESSURE
+#endif
 
-
-#define SEALEVELPRESSURE_HPA (1013.25)
-Adafruit_BMP3XX bmp; // I2C  //BAROMETRIC PRESSURE
-
-
-//Adafruit_LSM9DS1 lsm = Adafruit_LSM9DS1(); 
-
-
+#ifdef ACCL_GYRO_SENSOR_EXISTS 
+  #include "Adafruit_LSM9DS1.h"
+  Adafruit_LSM9DS1 lsm = Adafruit_LSM9DS1(); 
+#endif
 
 // Arduino BH1750FVI Light sensor
 //https://github.com/mysensors/MySensorsArduinoExamples/blob/master/examples/LightLuxSensor/LightLuxSensor.ino
@@ -56,6 +61,7 @@ void Sensors_PeripInit(void){
   SD_Card_Info();
   SD_Card_Init();
   GetFileSize();
+  ReadConfigFile();
   RTC_Init();
 
 
@@ -101,8 +107,17 @@ void Sensors_PeripInit(void){
    #endif 
 
 }
- // #ifdef PM25_DUST_SENSOR_EXISTS 
-        
+void tcaselect(uint8_t i) {
+ // if (i > 7) return;
+  Wire.beginTransmission(TCAADDR);
+    //dafruit Industries
+    //  https://learn.adafruit.com/adafruit-tca9548a-1-to-8-i2c-multiplexer-breakout
+    Wire.write(1 << i);
+    Wire.endTransmission();
+    delay(2);
+}
+
+#ifdef PM25_DUST_SENSOR_EXISTS  
 void PrintPMValues(byte PMError, byte PMCount){
   /*
       Serial.println();
@@ -159,18 +174,9 @@ void PrintPMValues(byte PMError, byte PMCount){
       PrintPMValues(PMError,PMCount);  
     }
 }
+ #endif 
 
-
-void tcaselect(uint8_t i) {
- // if (i > 7) return;
-  Wire.beginTransmission(TCAADDR);
-    //dafruit Industries
-    //  https://learn.adafruit.com/adafruit-tca9548a-1-to-8-i2c-multiplexer-breakout
-    Wire.write(1 << i);
-    Wire.endTransmission();
-    delay(2);
-}
-
+#ifdef ACCL_GYRO_SENSOR_EXISTS 
 void SensorACccel_GyroInit(){
     tcaselect(CHANNEL_ACCEL_GYRO);
     if (!IMU.begin()) {
@@ -219,8 +225,8 @@ void SensorAcccel_GyroRead(){
   }
   else Serial.println("Gyroscope Reading Problem");
 }
-  
-  
+#endif  
+#ifdef TEMP_HUM_1_SENSOR_EXISTS  
 void SensorInit_Si072(byte Channel){
   // Temperature & Humidity Sensor
   if(Channel != NO_IC2_MULTIPLEXER)tcaselect(Channel);
@@ -316,9 +322,10 @@ void SensorRead_Si072(byte Channel){
        default:
         Serial.print("error");
        break;
-    }
-    
+    } 
 }
+#endif
+#ifdef BAR_PRES_SENSOR_EXISTS 
 void SensorAlt_Init() {
   tcaselect(CHANNEL_BAROMETRIC);
   Serial.println("BMP388 test");
@@ -361,6 +368,8 @@ void SensorAlt_Read(){
     Serial.println(" m");
   }
 }
+#endif
+#ifdef LIGHT_SENSOR_EXISTS
 void displaySensorDetails(void)
 {
   sensor_t sensor;
@@ -376,14 +385,6 @@ void displaySensorDetails(void)
   Serial.println(F(""));
  // delay(500);
 }
-
-
-
-/**************************************************************************/
-/*
-    Configures the gain and integration time for the TSL2591
-*/
-/**************************************************************************/
 void configureSensor(void)
 {
  
@@ -457,106 +458,10 @@ void SensorLight_Read(void) {
   Serial.print(F("Luminosity: "));
   Serial.println(Values.Luminosity, DEC);
 }
-//--------------------------------
-void readPMconc(void) {
-/*
- //   int j=0;
-    int i=0;
-    int checksum = 32768;
-  //  Serial1.begin(9600); //dont do doesnt work!!
-    delay(10);
-
-    for (i=0; i<10; i++){
-        data[i]=0;
-    }
-    start[0]=0;
-    i=0;
-        #ifndef LAB_TEST_DEVICE
-      Serial.print("a");
-      #endif
-
-  #define UART_WAIT 30
-
-    while (Serial1.available()<=0 && i<UART_WAIT){ // code stuck here in while loop
-        delay(1);
-        i++;
-        if(i > UART_WAIT) {
-      UartError++;
-      break;
-    }
-    }
-            #ifndef LAB_TEST_DEVICE
-        Serial.print("b");//Serial.print(i);
-        #endif
-
-    if (Serial1.available()){
-        Serial1.readBytes(start,1);
-        i=0;
-        while (start[0]!=0xAA){
-            Serial1.readBytes(start,1);
-            delay(1);
-            i++;
-             if(i > UART_WAIT) {
-        UartError++;
-        break;
-      }
-        }
-
-          Serial1.readBytes(data,9); //2018.02.14
-
-
-        checksum=(int)data[1]+(int)data[2]+(int)data[3]+(int)data[4]+(int)data[5]+(int)data[6];
-        }
-      // Serial.print("data:");Serial.print(data);
-            #ifndef LAB_TEST_DEVICE
-        Serial.print("c");//Serial.print(i);
-        #endif
-
-    if ((unsigned char)checksum==data[7]){             //chenll,has to change the type before comparing.
-        RawValue.PM25=(((float)data[2])*256+(float)data[1])/10;
-    //    PM10=(((float)data[4])*256+(float)data[3])/10;
-            #ifndef LAB_TEST_DEVICE
-          Serial.print(" PM Ok ");//Serial.print(RawValue.PM25);
-          #endif
-
-        PMSuccess++;
-    }
-    else{
-        PMFail++;
-   //     Serial.print(" PM Fail ");
-    }
-
-
-
-
-#ifdef DEBUG
-    Serial.print("PM :");
-    Serial.print(start[0],HEX);Serial.print(".");
-    Serial.print(data[0],HEX);Serial.print(".");
-    Serial.print(data[1],HEX);Serial.print(".");
-    Serial.print(data[2],HEX);Serial.print(".");
-    Serial.print(data[3],HEX);Serial.print(".");
-    Serial.print(data[4],HEX);Serial.print(".");
-    Serial.print(data[5],HEX);Serial.print(".");
-    Serial.print(data[6],HEX);Serial.print(".");
-    Serial.print(data[7],HEX);Serial.print(".");
-    Serial.print(data[8],HEX);Serial.print(".");
-    Serial.print("//");
-    Serial.print(checksum,HEX);
-
-    if(checksum == data[7]){
-        Serial.print("==");
-    }
-    else{
-        Serial.print("xx");
-    }
-
-    Serial.print(data[7],HEX);
-    Serial.print("//");
 #endif
-*/
-}
-/*
+
+
+#ifdef WIND_SENSOR_EXISTS
 
 void WindSpeed_Calculation(){
     tempReading = (double)Values.TemperatureSi072;
@@ -578,11 +483,7 @@ void WindSpeed_Calculation(){
       velReading = 0; // error handling in case of false zeroWindAdjustment setting
     }
 }
-  
-*/
-
-
-
+ 
  //  This Part is based on the Sensors Manufacturer Data sheet
   //  Values.WindMPH
   
@@ -590,8 +491,7 @@ void WindSpeed_Calculation(){
   //  Values.WindTemp  
   // #define WND_TEMP_Pin 1;// A1;   // temp sesnsor analog pin hooked up to Wind P sensor "TMP" pin
 
-  
-/*
+ 
 void WinSensor(){
         int windADunits = analogRead(WND_OUT_Pin);
     // Serial.print("RW ");   // print raw A/D for debug
@@ -604,9 +504,6 @@ void WinSensor(){
   //  float windMPH =  pow((((float)windADunits - 264.0) / 85.6814), 3.36814);
    // Serial.print(windMPH);
   //  Serial.print(" MPH\t");    
-
- 
-
 
     // temp routine and print raw and temp C
     int tempRawAD = analogRead(WND_TEMP_Pin);  
@@ -625,9 +522,6 @@ void WinSensor(){
  //   Serial.println(" C");
     //delay(750);
 }
-
-*/
-
-
+#endif
 
     

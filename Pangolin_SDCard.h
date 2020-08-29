@@ -1,12 +1,12 @@
 //https://www.arduino.cc/en/reference/SPI
 //https://learn.adafruit.com/adafruit-shield-compatibility/data-logging-shield-assembled
-
+  
 // https://learn.adafruit.com/adafruit-data-logger-shield/overview
 
 //https://cdn-learn.adafruit.com/assets/assets/000/066/497/original/adafruit_products_schem.png?1543358466'
 /*
   SD card test
-
+   
   This example shows how use the utility libraries on which the'
   SD library is based in order to get info about your SD card.
   Very useful for testing a card when you're not sure whether its working or not.
@@ -52,21 +52,32 @@ void SD_Card_Data_Preparation();
 void SD_Card_Header_Preparation();
 
 void GetFileSize(){
-   // SD_Card_Init();
     File dataFile = SD.open(LOG_FILE, FILE_WRITE);
     if (dataFile) {
-     // dataFile.println(dataString);
       FileSize.Total = dataFile.size();  
-      dataFile.close();
-      // print to the serial port too:
-      Serial.print("Data2 csv File:    ");
-      Serial.println(dataString);  
+      dataFile.close(); 
     }      
-  else {  
-      Serial.print("error opening : "); 
-      Serial.println(LOG_FILE);    
-      FileSize.Total = 0;
-    } 
+    else  FileSize.Total = 0;
+
+
+}
+   String ConfigFile= "ADConfig.txt";
+   String Config_Str = "";
+   
+void ReadConfigFile(){
+   File Config =  SD.open(ConfigFile);
+   Config_Str = "";
+   if (Config) {
+      Serial.println("Read.csv:");  
+      while (Config.available()) {
+        Config_Str += (char)(Config.read());
+      }
+      Config.close();
+      Serial.print("Config_Str ");Serial.println(Config_Str);   
+   }
+   else{
+      Serial.print("error opening"); Serial.println(ConfigFile);    
+   }
 }
 
 
@@ -89,9 +100,6 @@ void SD_CardLogTask(){
         dataString ="";  
         SD_Card_Data_Preparation();                                
     }   
-
-
-    
     File dataFile = SD.open(LOG_FILE, FILE_WRITE);
     // if the file is available, write to it:
     if (dataFile) {
@@ -223,9 +231,13 @@ void SD_Card_Header_Preparation(){
         
         dataString += "FirmVers " + FW_Version +  ",Dev_Id:" + EE_Id_EString + ',' + "SD Type: " + SD_TypeString + ',' + "Volume: " +String(SD_Volume) + " GB" + ',' +
         
-       "Found Sensors Id's:"  +  ','  + Sensor1_Id +  ',' +  Sensor2_Id + ','  + Sensor3_Id + ','  +  "PMsensor Rev"  + ',' +  Sensor_Info_SDS  +  ','  +  "\n";
-        
-        dataString += "Year,Month,Date,Hour,Min,Sec,";
+       "Found Sensors Id's:"  +  ','  + Sensor1_Id +  ',' +  Sensor2_Id + ','  + Sensor3_Id + ',' ;
+       
+       #ifdef PM25_DUST_SENSOR_EXISTS 
+          dataString += "PMsensor Rev"  + ',' +  Sensor_Info_SDS  +  ',';
+      #endif 
+        dataString += "\n" ;
+        dataString +=  "Year,Month,Date,Hour,Min,Sec,";
       #ifdef WIND_SENSOR_EXISTS  
         dataString += "WindRaw,velReading,WindMPH,WindTemp,";
       #endif  
@@ -264,8 +276,12 @@ void SD_Card_Header_Preparation(){
           dataString += "Acc.(x),Acc.(y),Acc.(z),Gyro(x),Gyro(y),Gyro(z),"; 
       #endif 
        #ifdef PM25_DUST_SENSOR_EXISTS 
-          dataString += "PM2.5,PM10"; 
-      #endif        
+          dataString += "PM2.5,PM10",; 
+      #endif  
+       #ifdef AD9153_PROTOTYPE 
+          dataString += "(A)rms,(V)rms,Power(W),PF,Freq."; 
+      #endif  
+            
 }
 void SD_Card_Data_Preparation(){
       dataString += Str_DispTime;     
@@ -305,8 +321,15 @@ void SD_Card_Data_Preparation(){
       #endif
 
          #ifdef PM25_DUST_SENSOR_EXISTS 
-          dataString += String(Values.PM25)+ ',' + String(Values.PM10) ; 
-      #endif          
+          dataString += String(Values.PM25)+ ',' + String(Values.PM10)+ ','  ; 
+      #endif  
+
+        #ifdef AD9153_PROTOTYPE 
+          dataString += String(rmsVals.CurrentRMSValue/1000)+ ',' + String(rmsVals.VoltageRMSValue/1000)+ ',';
+          dataString += String(powerVals.ActivePowerValue/1000)+ ',' + String(pqVals.PowerFactorValue)+ ',';
+          if((rmsVals.VoltageRMSValue/1000) > 32) dataString += String(pqVals.FrequencyValue);
+          else                                    dataString += "--";
+      #endif             
   
 }
 
@@ -328,7 +351,8 @@ void SD_Log_File(){
       dataString += String(RV_ADunits) + ',' + String(velReading)+ ',' + String(Values.WindTemp) + ',' +String(Values.WindMPH)+ ','       
       + String(Values.TemperatureSi072)+ ',' + String(Values.Humidity)+ ','+ String(Values.Pressure)+ ',' 
       + String(Values.TemperatureBMP) + ',' + String(Values.Altitude)+ ','+ String(Values.Luminosity) +','
-      + String(Accelometer.x) + ',' + String(Accelometer.y)+ ','+ String(Accelometer.z) + ','      
+      + String(Accelometer.x) + ',' + String(Accelometer.y)+ ','+ String(Accelometer.z) + ',
+      '      
       + String(Gyro.x) + ',' + String(Gyro.y)+ ','+ String(Gyro.z) ;       
    }      
   // open the file. note that only one file can be open at a time,
