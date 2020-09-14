@@ -17,13 +17,23 @@
 //#define WIND_SENSOR_EXISTS  
 //#define LEM_CURRENT_EXISTS
 //#define VOLTAGE_MEASURE_EXISTS
-//#define PM25_DUST_SENSOR_EXISTS
+#define PM25_DUST_SENSOR_EXISTS
+
+#define RELAY_OUT_1 23
+#define RELAY_OUT_2 53
+
 
 //#include "SdsDustSensor.h" // https://github.com/lewapek/sds-dust-sensors-arduino-library
 
+/*
  #define SI072_FIRST_SENSOR 7  // multiplexer Channel 7 first blu box prot
  #define SI072_SECOND_SENSOR 1 // first prot  0      0
  #define SI072_THIRD_SENSOR 2 // sec1                2 
+*/
+ #define SI072_FIRST_SENSOR 2  // multiplexer Channel 7 first blu box prot
+ #define SI072_SECOND_SENSOR 3 // first prot  0      0
+ #define SI072_THIRD_SENSOR 4 // sec1                2 
+
 
 #define NO_IC2_MULTIPLEXER 16
 

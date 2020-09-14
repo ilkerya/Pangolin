@@ -13,15 +13,16 @@
   #define OLED_MOSI  32// 11 //common 51
 #endif
 #ifdef AD9153_PROTOTYPE
-  #define OLED_GND 37// 13
-  #define OLED_POWER 35// 13
-  #define OLED_CS    31// 13
-  #define OLED_RESET 29
-  #define OLED_DC    27// 12  // common 50
-  #define OLED_CLK   25 //13 // common  52
-  #define OLED_MOSI  23// 11 //common 51
-#endif
 
+  #define OLED_GND 42// 13
+  #define OLED_POWER 40// 13
+  #define OLED_CS    36// 13
+  #define OLED_RESET 34
+  #define OLED_DC    32// 12  // common 50
+  #define OLED_CLK   30 //13 // common  52
+  #define OLED_MOSI  28// 11 //common 51
+ 
+#endif
 
 /*
 #define OLED_CS    A0
@@ -30,7 +31,6 @@
 #define OLED_CLK   A3
 #define OLED_MOSI  A4
 */
-
 
 #define NUMFLAKES 10
 #define XPOS 0

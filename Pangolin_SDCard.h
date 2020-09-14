@@ -276,7 +276,7 @@ void SD_Card_Header_Preparation(){
           dataString += "Acc.(x),Acc.(y),Acc.(z),Gyro(x),Gyro(y),Gyro(z),"; 
       #endif 
        #ifdef PM25_DUST_SENSOR_EXISTS 
-          dataString += "PM2.5,PM10",; 
+          dataString += "PM2.5,PM10,"; 
       #endif  
        #ifdef AD9153_PROTOTYPE 
           dataString += "(A)rms,(V)rms,Power(W),PF,Freq."; 

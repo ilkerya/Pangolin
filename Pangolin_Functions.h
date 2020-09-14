@@ -85,7 +85,15 @@ void Common_Loop(){
 
     if (SampleTime == TASK_1SEC) Log_Data_Write_SD();
 
+      if( (Values.PM25 > 64) &&  !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
+      if( (Values.PM25 < 16) &&   digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,LOW);
 
+      //    digitalWrite(RELAY_OUT_1, digitalRead(RELAY_OUT_1) ^ 1);  
+
+      if((rmsVals.CurrentRMSValue/1000) > 4 && !digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,HIGH);
+      if((rmsVals.CurrentRMSValue/1000) < 1 && digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,LOW);     
+
+           //     digitalWrite(RELAY_OUT_2, digitalRead(RELAY_OUT_2) ^ 1);  
   }
   
   if (LoopTask_2Sec) {
@@ -103,8 +111,10 @@ void Common_Loop(){
       #ifdef PM25_DUST_SENSOR_EXISTS  
           SDS_DustSensor();
       #endif
-      
 
+
+    
+ 
 
     DisplayValueTimer++;
     if (DisplayValueTimer > 4)DisplayValueTimer = 0;
@@ -123,6 +133,7 @@ void Common_Loop(){
   if (LoopTask_60Sec) {
     LoopTask_60Sec = OFF;
     if (SampleTime == TASK_60SEC) Log_Data_Write_SD();
+
 
   }
   
@@ -338,7 +349,7 @@ void UpdateInfoQue(void){
      DispRollIndex[2] = DispRollIndex[1];
      DispRollIndex[1] = DispRollIndex[0];
      DispRollIndex[0]++;
-     if (DispRollIndex[0]  > 7) DispRollIndex[0] = 1;
+     if (DispRollIndex[0]  > 9) DispRollIndex[0] = 1;
 }
 void UpdateDispRoll(void){
     if(SensorRollTimer){
@@ -696,8 +707,13 @@ void IO_Settings() {
   pinMode(5, INPUT_PULLUP);
    
 #endif
-  pinMode(53, OUTPUT);  // SS Pin high to avoid miscommunication
-  digitalWrite(53, HIGH);
+  digitalWrite(RELAY_OUT_1, LOW);
+  pinMode(RELAY_OUT_1, OUTPUT);  // SS Pin high to avoid miscommunication
+
+  digitalWrite(RELAY_OUT_2, LOW);
+  pinMode(RELAY_OUT_2, OUTPUT);  // SS Pin high to avoid miscommunication
+
+ 
   //const int chipSelect = 10; // mega SS for SD Card
   pinMode(10, OUTPUT);
   digitalWrite(10, HIGH);

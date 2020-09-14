@@ -79,7 +79,12 @@ void PrintDisplayBuffer(void){
     Serial.println();   
     //Compiled: Jul 21 2020 15:55:39 7.3.0
     Serial.println( "Compiled: " + FW_Version  + ' ' + __VERSION__);  // 11 1 8
-   // Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__);   
+   // Serial.println( "Compiled: " __DATE__ ", " __TIME__ ", " __VERSION__); 
+
+    Serial.print("RELAY 1:");Serial.println(digitalRead(RELAY_OUT_1));
+    Serial.print("RELAY 2:");Serial.println(digitalRead(RELAY_OUT_2));   
+     
+     
     Serial.println();
     Serial.println();     
 }
@@ -129,17 +134,15 @@ const char* myName() {
   return name;
 }
 void UpdateProperLine(byte Index, byte Line){
-    String str ="";
+    String str = String(Index)+ ".";
     switch(Index){
-      case 0: //// show nothing                 
+      case 0: str = "";//// show nothing                 
       break;    
-      case 1: str = "1. FW " + FW_Version;  // fw version compile time             
+      case 1: str += " FW " + FW_Version;  // fw version compile time             
       break;
-      case 2: str += "2. Dev Id: " + EE_Id_EString;  // device id           
+      case 2: str += " Dev Id: " + EE_Id_EString;  // device id           
       break;
-      case 3:  //   str = myName();   
-      //     str =  UpdateTempHumSensor(1, Values.TemperatureSi072_Ch1, Values.Humidity_Ch1);         
-            str = "3."; // temp sensor1              1.   " + Sensor1_Id;
+      case 3:   
           if (!isnan(Values.TemperatureSi072_Ch1)) {
             str += String(Values.TemperatureSi072_Ch1,1);
             str += " C";  DispExpSens1 = ON;                           
@@ -153,7 +156,7 @@ void UpdateProperLine(byte Index, byte Line){
           str += ' ' + Sensor1_Id;
           
      break;
-     case 4: str = "4."; // temp sensor2
+     case 4: //str = "4."; // temp sensor2
           if (!isnan(Values.TemperatureSi072_Ch2)) {
             str += String(Values.TemperatureSi072_Ch2,1);
             str += " C";   DispExpSens2 = ON;               //  str += '°'; 
@@ -166,7 +169,7 @@ void UpdateProperLine(byte Index, byte Line){
           else   str +="----";
           str += ' ' + Sensor2_Id;              
      break;
-     case 5: str = "5."; // temp sensor3
+     case 5: //str = "5."; // temp sensor3
          if (!isnan(Values.TemperatureSi072_Ch3)) {
             str += String(Values.TemperatureSi072_Ch3,1);
             str += " C";    DispExpSens3 = ON;
@@ -181,14 +184,15 @@ void UpdateProperLine(byte Index, byte Line){
      break;
      case 6:       
               #ifdef VOLTAGE_MEASURE_EXISTS
-                str += "6. " + String(Mains_Volt) + "V ";  
+               // str += " " + String(Mains_Volt) + "V ";  
+                str += " " + String(Mains_Volt) + "V ";  
              #endif
              #ifdef LEM_CURRENT_EXISTS               
                 str += String(Current_Mains_Rms) + "A ";  
             #endif
 
              #ifdef AD9153_PROTOTYPE 
-              str += "6. " +String(rmsVals.CurrentRMSValue/1000)+ "A "; // 3/4/2
+              str += " " +String(rmsVals.CurrentRMSValue/1000)+ "A "; // 3/4/2
               str +=String((unsigned int)(rmsVals.VoltageRMSValue/1000))+ "V "; //4/2  
               if((rmsVals.VoltageRMSValue/1000) > 32) {
                // str += String((byte)pqVals.FrequencyValue)+ "Hz"; //4
@@ -198,19 +202,32 @@ void UpdateProperLine(byte Index, byte Line){
             #endif 
      break;      
      case 7:    
-            #ifdef PM25_DUST_SENSOR_EXISTS  
-                str += "7. PM2.5: ";
-                  if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
-                  else str += String(Values.PM25,0);
-            #endif 
+
              #ifdef AD9153_PROTOTYPE 
-              str += "7. " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
+          //   str += "7. " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
+              str += " " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
               str += "PF " + String(pqVals.PowerFactorValue)+ " ";  // 3/4/1 
                
             #endif 
-
+     break; 
+     case 8:   
+            #ifdef PM25_DUST_SENSOR_EXISTS  
+            
+            str += " PM2.5: ";
+              //  str += "7. PM2.5: ";
+                  if(Values.PM25 < 100.00)str +=  String(Values.PM25,1);
+                  else str += String(Values.PM25,0);
+            #endif 
                  
-     break;     
+     break;  
+     case 9:  
+          str += "  RL1: " +String(digitalRead(RELAY_OUT_1)); //7 + 1
+          str += "  RL2: " +String(digitalRead(RELAY_OUT_2));; //7 + 1  
+
+          // 2 + 8 + 8 = 18
+     
+      break;  
+             
     default: str = "default";
     break; 
     }     
