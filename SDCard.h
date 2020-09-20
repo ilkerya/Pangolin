@@ -325,9 +325,9 @@ void SD_Card_Data_Preparation(){
       #endif  
 
         #ifdef AD9153_PROTOTYPE 
-          dataString += String(rmsVals.CurrentRMSValue/1000)+ ',' + String(rmsVals.VoltageRMSValue/1000)+ ',';
-          dataString += String(powerVals.ActivePowerValue/1000)+ ',' + String(pqVals.PowerFactorValue)+ ',';
-          if((rmsVals.VoltageRMSValue/1000) > 32) dataString += String(pqVals.FrequencyValue);
+          dataString += String(Values.Current)+ ',' + String(Values.Voltage)+ ',';
+          dataString += String(Values.ActivePower)+ ',' + String(Values.PowerFactor)+ ',';
+          if((Values.Voltage) > 32) dataString += String(Values.Frequency);
           else                                    dataString += "--";
       #endif             
   

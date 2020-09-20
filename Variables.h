@@ -225,6 +225,11 @@ struct
   float TemperatureSi072_Ch2; // 27
   float Humidity_Ch3;
   float TemperatureSi072_Ch3; // 27  
+  float Current;
+  float Voltage;
+  float PowerFactor; 
+  float ActivePower;
+  float Frequency;
   float Pressure; //  
   float TemperatureBMP; //  
   float Altitude; //

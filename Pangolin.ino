@@ -25,15 +25,16 @@
 #include <EEPROM.h>
 #include <avr/wdt.h>
 
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Def.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Variables.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_RTC.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_SDCard.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_UI.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Display.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Sensors.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_ADE9153.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Pangolin_Functions.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Defs.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Variables.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\RTC.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\SDCard.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\UserInt.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Display.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Sensors.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\ADE9153.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Menu.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Functions.h"
 
 // C:\Projects\Pangolin\..   Atmel Studio Project Path
 // C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths   

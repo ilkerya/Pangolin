@@ -1,11 +1,4 @@
-/*
-void ADsetup() {
-  
-}
-void AD_Loop() {
-  
-}
-  */
+
 #ifdef AD9153_PROTOTYPE
 
 void resetADE9153A(void)
@@ -63,17 +56,25 @@ void readandwrite()
   ade9153A.ReadRMSRegs(&rmsVals);
   ade9153A.ReadPQRegs(&pqVals);
   ade9153A.ReadTemperature(&tempVal);
+
+  Values.Current = rmsVals.CurrentRMSValue/1000;
+  if(Values.Current < 0.00) Values.Current = 0.00;
   
   Serial.print("RMS Current:\t");        
-  Serial.print(rmsVals.CurrentRMSValue/1000); 
+  Serial.print(Values.Current); 
   Serial.println(" A");
+
+  Values.Voltage = rmsVals.VoltageRMSValue/1000;
   
   Serial.print("RMS Voltage:\t");        
-  Serial.print(rmsVals.VoltageRMSValue/1000);
+  Serial.print(Values.Voltage);
   Serial.println(" V");
+
+  Values.ActivePower = powerVals.ActivePowerValue/1000;
+  if(Values.ActivePower < 0.00) Values.ActivePower = 0.00;
   
   Serial.print("Active Power:\t");        
-  Serial.print(powerVals.ActivePowerValue/1000);
+  Serial.print(Values.ActivePower);
   Serial.println(" W");
   
   Serial.print("Reactive Power:\t");        
@@ -84,8 +85,12 @@ void readandwrite()
   Serial.print(powerVals.ApparentPowerValue/1000);
   Serial.println(" VA");
   
+  Values.PowerFactor = pqVals.PowerFactorValue;
+  
   Serial.print("Power Factor:\t");        
-  Serial.println(pqVals.PowerFactorValue);
+  Serial.println(Values.PowerFactor);
+
+   Values.Frequency =  pqVals.FrequencyValue;
   
   Serial.print("Frequency:\t");        
   Serial.print(pqVals.FrequencyValue);
@@ -98,20 +103,13 @@ void readandwrite()
   Serial.println("");
   Serial.println("");
 }
-void AD_Loop() {
- // return;
-  unsigned long currentReport = millis(); 
-  if ((currentReport - lastReport) >= reportInterval){
-    lastReport = currentReport;
-    readandwrite();
-  }
-  inputState = digitalRead(USER_INPUT);
-  if (inputState == LOW) {
-        wdt_reset();
-        wdt_enable(WDTO_8S);
+void ADE9153_Calibration() {
+      wdt_reset();
+      wdt_enable(WDTO_8S);
     Serial.println("Autocalibrating Current Channel_1");        
     ade9153A.StartAcal_AINormal();
     Serial.println("Autocalibrating Current Channel_2");
+  
     runLength(20);
     Serial.println("Autocalibrating Current Channel_3");          
     ade9153A.StopAcal();      
@@ -136,6 +134,17 @@ void AD_Loop() {
     ade9153A.SPI_Write_32(REG_AVGAIN, Vgain);
     
     Serial.println("Autocalibration Complete");
+}
+
+void AD_Loop() {
+ // return;
+  unsigned long currentReport = millis(); 
+  if ((currentReport - lastReport) >= reportInterval){
+    lastReport = currentReport;
+    readandwrite();
   }
+  inputState = digitalRead(USER_INPUT);
+  if (inputState == LOW) ADE9153_Calibration();
+
 }
 #endif  

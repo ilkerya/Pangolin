@@ -192,11 +192,11 @@ void UpdateProperLine(byte Index, byte Line){
             #endif
 
              #ifdef AD9153_PROTOTYPE 
-              str += " " +String(rmsVals.CurrentRMSValue/1000)+ "A "; // 3/4/2
-              str +=String((unsigned int)(rmsVals.VoltageRMSValue/1000))+ "V "; //4/2  
-              if((rmsVals.VoltageRMSValue/1000) > 32) {
+              str += " " +String(Values.Current)+ "A "; // 3/4/2
+              str +=String((unsigned int)Values.Voltage)+ "V "; //4/2  
+              if(Values.Voltage > 32) {
                // str += String((byte)pqVals.FrequencyValue)+ "Hz"; //4
-                str += String(pqVals.FrequencyValue)+ "Hz"; //4
+                str += String(Values.Frequency)+ "Hz"; //4
               }
               else  str += "--Hz"; //4
             #endif 
@@ -205,8 +205,8 @@ void UpdateProperLine(byte Index, byte Line){
 
              #ifdef AD9153_PROTOTYPE 
           //   str += "7. " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
-              str += " " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
-              str += "PF " + String(pqVals.PowerFactorValue)+ " ";  // 3/4/1 
+              str += " " + String(Values.ActivePower)+ " w "; // 3/4/3
+              str += "PF " + String(Values.PowerFactor)+ " ";  // 3/4/1 
                
             #endif 
      break; 
