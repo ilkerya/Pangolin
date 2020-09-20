@@ -153,6 +153,10 @@ void SerialPortRx(void);
 void UpdateDispRoll(void);
 void Log_Data_Write_SD(void);
 
+void Parse_FileString(void);
+void Relay_loop(void) ;
+float GetValue(byte Relay);
+
 // C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries
 // Location of Main Librarires
 

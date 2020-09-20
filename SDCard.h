@@ -68,12 +68,14 @@ void ReadConfigFile(){
    File Config =  SD.open(ConfigFile);
    Config_Str = "";
    if (Config) {
-      Serial.println("Read.csv:");  
+      Serial.println(ConfigFile);  
       while (Config.available()) {
         Config_Str += (char)(Config.read());
       }
       Config.close();
-      Serial.print("Config_Str ");Serial.println(Config_Str);   
+      Serial.print("File Content: ");Serial.println(Config_Str);  
+
+       Parse_FileString();
    }
    else{
       Serial.print("error opening"); Serial.println(ConfigFile);    

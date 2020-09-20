@@ -2,6 +2,7 @@
 // https://www.onlinegdb.com/edit/Hkmlxi_08
 
 
+
 void Log_Data_Write_SD(){
 
       SD_CardLogTask(); // Data 2 SD card Write
@@ -86,6 +87,8 @@ void Common_Loop(){
 
     if (SampleTime == TASK_1SEC) Log_Data_Write_SD();
 
+    
+/*
       if( (Values.PM25 > 64) &&  !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
       if( (Values.PM25 < 16) &&   digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,LOW);
 
@@ -93,7 +96,7 @@ void Common_Loop(){
 
       if(Values.Current > 4 && !digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,HIGH);
       if(Values.Current < 1 && digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,LOW);     
-
+*/
            //     digitalWrite(RELAY_OUT_2, digitalRead(RELAY_OUT_2) ^ 1);  
   }
   
@@ -114,7 +117,7 @@ void Common_Loop(){
       #endif
 
 
-    
+    Relay_loop();
  
 
     DisplayValueTimer++;
@@ -391,4 +394,127 @@ void MicroInit() {
   ADE9153_Calibration();
   #endif  
   
+}
+
+
+//String input = "Relay1,  20.34,   Temperature1,  21.18,Relay2,  4.0,   Current,  4.4";
+//String input = Config_Str;
+float RL1Min, RL1Max, RL2Min,RL2Max;
+String RLlVal;
+String RL2Val;
+//bool RELAY1 , RELAY2;
+float CompValue;
+void Parse_FileString(){
+  String Relay1str, RlStr2, RlStr4;
+  String Relay2str, RlStr6,  RlStr8;
+  int DelimCount=0;
+  int j = 0;
+  for (int i = 0; i < Config_Str.length(); i++) {
+    if (Config_Str.substring(i, i+1) == ",") {
+      switch(DelimCount){
+        case 0:Relay1str = Config_Str.substring(j, i);
+        break;
+        case 1:RlStr2 = Config_Str.substring(j,i);
+        break;
+        case 2:RLlVal = Config_Str.substring(j,i);
+        break;
+        case 3:RlStr4 = Config_Str.substring(j,i);
+        break;
+        case 4:Relay2str = Config_Str.substring(j,i);
+        break;
+        case 5:RlStr6 = Config_Str.substring(j,i);
+        break; 
+        case 6:RL2Val = Config_Str.substring(j,i);
+             j = i+1;
+             RlStr8 = Config_Str.substring(j);
+        break; 
+        default:
+        break;   
+      }
+      j = i+1;
+      DelimCount++;
+    }
+  }
+  Relay1str.trim();//remove leadig & last space characters
+  RlStr2.trim();
+  RLlVal.trim();
+  RlStr4.trim();
+  Relay2str.trim();
+  RlStr6.trim();
+  RL2Val.trim();
+  RlStr8.trim();
+
+  RL1Min =RlStr2.toFloat();
+  RL1Max= RlStr4.toFloat(); 
+  RL2Min= RlStr6.toFloat();
+  RL2Max= RlStr8.toFloat();
+
+
+
+   // Serial.println("'''''''''''''''''");
+    Serial.println(Relay1str);
+  Serial.println(RlStr2);
+  Serial.println(RLlVal);
+  Serial.println(RlStr4);
+  Serial.println(Relay2str);
+  Serial.println(RlStr6);
+  Serial.println(RL2Val);
+  Serial.println(RlStr8);
+}
+#define Relay1_Val 8
+#define Relay2_Val 4
+
+float GetValue(byte Relay){
+  String Val = "";
+  if(Relay == Relay1_Val) Val =  RLlVal;
+  if(Relay == Relay2_Val) Val =  RL2Val;
+  if(Val == "Temperature1")return Values.TemperatureSi072_Ch1;
+  if(Val == "Temperature2")return Values.TemperatureSi072_Ch2;
+  if(Val == "Temperature3")return  Values.TemperatureSi072_Ch3;
+  if(Val == "Humidity1")return Values.Humidity_Ch1;
+  if(Val == "Humidity2")return  Values.Humidity_Ch2;
+  if(Val == "Humidity3")return  Values.Humidity_Ch3;
+  if(Val == "PM2.5")return  Values.PM25;
+  if(Val == "PM10")return  Values.PM10;
+  if(Val == "Current") return  Values.Current;
+  if(Val == "Voltage") return  Values.Voltage;
+  if(Val == "Power") return  Values.ActivePower;  
+  if(Val == "PF") return  Values.PowerFactor;      
+  return 0;
+}
+void Relay_loop() {
+ // Parse_FileString();
+  CompValue = GetValue(Relay1_Val);
+  //if((CompValue < RL1Min)&& (RELAY1 == 1)) RELAY1 = 0;
+  //if((CompValue > RL1Max)&& (RELAY1 == 0)) RELAY1 = 1;
+
+  if(CompValue > RL1Max && !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
+  if(CompValue < RL1Min &&  digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,LOW);  
+
+   // put your main code here, to run repeatedly:
+  Serial.print("RL1Min: ");Serial.println(RL1Min);
+  Serial.print(RLlVal+":  ");Serial.print(CompValue); 
+  Serial.print("     RELAY1: ");Serial.println(RELAY_OUT_1); 
+  Serial.print("RL1Max: ");Serial.println(RL1Max); 
+
+  CompValue = GetValue(Relay2_Val);
+  //if((CompValue < RL2Min)&& RELAY2) RELAY2 = 0;
+  //if((CompValue > RL2Max)&& !RELAY2) RELAY2 = 1; 
+  
+  if(CompValue > RL2Max && !digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,HIGH);
+  if(CompValue < RL2Min &&  digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,LOW);  
+  
+  
+  Serial.print("RL2Min: ");Serial.println(RL2Min);
+  Serial.print(RL2Val+":  ");Serial.print(CompValue);
+  Serial.print("      RELAY2: ");Serial.println(RELAY_OUT_2);
+  Serial.print("RL2Max: ");Serial.println(RL2Max); 
+
+ //   CurrentAD += 0.2;
+  //  Values.TemperatureSi072_Ch1 -= 0.35;
+
+ //   if( CurrentAD > 6.00) CurrentAD = 0.1;
+  //   if( Values.TemperatureSi072_Ch1 < 13.00) Values.TemperatureSi072_Ch1 = 27.3;  
+
+ 
 }
