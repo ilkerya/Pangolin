@@ -242,17 +242,7 @@ void WindSensorRead() {
   */
 }
 
-
-
-
-
-
-
-
-
-
 void IO_Settings() {
-
 
 #ifdef FIRST_PROTOTYPE
 
@@ -295,7 +285,6 @@ void IO_Settings() {
   pinMode(KEY_RIGHT, INPUT);           // set pin to input
   pinMode(KEY_RIGHT, INPUT_PULLUP);
 
-
 }
 void MicroInit() {
   
@@ -304,11 +293,15 @@ void MicroInit() {
   IO_Settings();
   DisplaySetPowerIO();
 
-  ResetCasePrint();
+ #ifdef ARDUINO_MEGA // 8 bit AVR
 
+#endif
+
+  ResetCasePrint();
   //  SDCard.LogStatus = 0;      // default start with log off;
   EEDisplaySleepRead();
   EEReadLog();
+  
   SDCard.LogStatusInit = 0;  // put the header of the csv file
 
   Serial.print("SDCard.LogStatus: ");
@@ -344,6 +337,10 @@ void MicroInit() {
   //Compiled: Jul 21 2020 15:55:39 7.3.0
 
   //  ShowSerialCode();
+
+
+
+  
   UpdateDeviceEE();
   Serial.print("EE_Id_EString: ") ;
   Serial.print(EE_Id_EString.charAt(0));
@@ -358,6 +355,9 @@ void MicroInit() {
   LOG_FILE.setCharAt(5, EE_Id_EString.charAt(1));
   LOG_FILE.setCharAt(6, EE_Id_EString.charAt(2));
   LOG_FILE.setCharAt(7, EE_Id_EString.charAt(3));
+
+
+
 
   Serial.print("LOG_FILE: ") ;
   Serial.print(LOG_FILE);
@@ -389,26 +389,22 @@ void MicroInit() {
 #ifdef ARDUINO_DUE
   startTimer(TC1, 0, TC3_IRQn, 64); //TC1 channel 0, the IRQ for that channel and the desired frequency
 #endif
-    #ifdef AD9153_PROTOTYPE
+
+  #ifdef AD9153_PROTOTYPE
   ADsetup();
   ADE9153_Calibration();
   #endif  
   
 }
 
+void Check_CompValue(void){
+  
+}
 
-//String input = "Relay1,  20.34,   Temperature1,  21.18,Relay2,  4.0,   Current,  4.4";
-//String input = Config_Str;
-float RL1Min, RL1Max, RL2Min,RL2Max;
-String RLlVal;
-String RL2Val;
-//bool RELAY1 , RELAY2;
-float CompValue;
 void Parse_FileString(){
-  String Relay1str, RlStr2, RlStr4;
-  String Relay2str, RlStr6,  RlStr8;
   int DelimCount=0;
   int j = 0;
+  int index;
   for (int i = 0; i < Config_Str.length(); i++) {
     if (Config_Str.substring(i, i+1) == ",") {
       switch(DelimCount){
@@ -435,24 +431,57 @@ void Parse_FileString(){
       DelimCount++;
     }
   }
-  Relay1str.trim();//remove leadig & last space characters
-  RlStr2.trim();
-  RLlVal.trim();
-  RlStr4.trim();
-  Relay2str.trim();
-  RlStr6.trim();
-  RL2Val.trim();
-  RlStr8.trim();
+ 
 
-  RL1Min =RlStr2.toFloat();
-  RL1Max= RlStr4.toFloat(); 
-  RL2Min= RlStr6.toFloat();
-  RL2Max= RlStr8.toFloat();
+    index = ELEMENTS;
+    Relay1str.trim();//remove leadig & last space characters
+    if(Relay1str == "Relay1"){
+      index == 0;
+      RLlVal.trim();  // Temperature // Current // PM25
+      for( index = 0; index < ELEMENTS; index++){
+        if(RLlVal == KeyWords[index]){      
+          RlStr2.trim();
+          RlStr4.trim();       
+          RL1Min =RlStr2.toFloat();
+          RL1Max= RlStr4.toFloat();
+          
+          break;  
+        }  
+      } 
+   }
+   if(index == ELEMENTS) {
+        Relay1str = "---";     
+        RLlVal = "Nan";   
+        RlStr2 = "----";
+        RlStr4 = "----";
+    }
 
 
+
+    index = ELEMENTS;
+    Relay2str.trim();//remove leadig & last space characters
+    if(Relay2str == "Relay2"){
+      index = 0;
+      RL2Val.trim();  // Temperature // Current // PM25
+      for( index = 0; index < ELEMENTS; index++){
+        if(RL2Val == KeyWords[index]){      
+          RlStr6.trim();
+          RlStr8.trim();       
+          RL2Min= RlStr6.toFloat();
+          RL2Max= RlStr8.toFloat();
+          break;  
+        }  
+      }     
+   }
+    if(index == ELEMENTS) {
+        Relay2str = "---";     
+        RL2Val = "Nan";   
+        RlStr6 = "----";
+        RlStr8 = "----";
+    }
 
    // Serial.println("'''''''''''''''''");
-    Serial.println(Relay1str);
+  Serial.println(Relay1str);
   Serial.println(RlStr2);
   Serial.println(RLlVal);
   Serial.println(RlStr4);
@@ -467,44 +496,48 @@ void Parse_FileString(){
 float GetValue(byte Relay){
   String Val = "";
   if(Relay == Relay1_Val) Val =  RLlVal;
-  if(Relay == Relay2_Val) Val =  RL2Val;
-  if(Val == "Temperature1")return Values.TemperatureSi072_Ch1;
-  if(Val == "Temperature2")return Values.TemperatureSi072_Ch2;
-  if(Val == "Temperature3")return  Values.TemperatureSi072_Ch3;
-  if(Val == "Humidity1")return Values.Humidity_Ch1;
-  if(Val == "Humidity2")return  Values.Humidity_Ch2;
-  if(Val == "Humidity3")return  Values.Humidity_Ch3;
-  if(Val == "PM2.5")return  Values.PM25;
-  if(Val == "PM10")return  Values.PM10;
-  if(Val == "Current") return  Values.Current;
-  if(Val == "Voltage") return  Values.Voltage;
-  if(Val == "Power") return  Values.ActivePower;  
-  if(Val == "PF") return  Values.PowerFactor;      
+  else if(Relay == Relay2_Val) Val =  RL2Val;
+  if(Val == KeyWords[0])return Values.TemperatureSi072_Ch1;
+  if(Val == KeyWords[1])return Values.TemperatureSi072_Ch2;
+  if(Val == KeyWords[2])return  Values.TemperatureSi072_Ch3;
+  if(Val == KeyWords[3])return Values.Humidity_Ch1;
+  if(Val == KeyWords[4])return  Values.Humidity_Ch2;
+  if(Val == KeyWords[5])return  Values.Humidity_Ch3;
+  if(Val == KeyWords[6])return  Values.PM25;
+  if(Val == KeyWords[7])return  Values.PM10;
+  if(Val == KeyWords[8]) return  Values.Current;
+  if(Val == KeyWords[9]) return  Values.Voltage;
+  if(Val == KeyWords[10]) return  Values.ActivePower;  
+  if(Val == KeyWords[11]) return  Values.PowerFactor;     
   return 0;
 }
 void Relay_loop() {
  // Parse_FileString();
-  CompValue = GetValue(Relay1_Val);
-  //if((CompValue < RL1Min)&& (RELAY1 == 1)) RELAY1 = 0;
-  //if((CompValue > RL1Max)&& (RELAY1 == 0)) RELAY1 = 1;
-
-  if(CompValue > RL1Max && !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
-  if(CompValue < RL1Min &&  digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,LOW);  
-
+  CompValue = 0;
+  if( RLlVal != "Nan"){
+    CompValue = GetValue(Relay1_Val);
+    if(CompValue > RL1Max && !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
+    if(CompValue < RL1Min &&  digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,LOW); 
+  }
+  else{
+      digitalWrite(RELAY_OUT_1,LOW);
+  }
    // put your main code here, to run repeatedly:
   Serial.print("RL1Min: ");Serial.println(RL1Min);
   Serial.print(RLlVal+":  ");Serial.print(CompValue); 
   Serial.print("     RELAY1: ");Serial.println(RELAY_OUT_1); 
   Serial.print("RL1Max: ");Serial.println(RL1Max); 
-
-  CompValue = GetValue(Relay2_Val);
-  //if((CompValue < RL2Min)&& RELAY2) RELAY2 = 0;
-  //if((CompValue > RL2Max)&& !RELAY2) RELAY2 = 1; 
-  
-  if(CompValue > RL2Max && !digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,HIGH);
-  if(CompValue < RL2Min &&  digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,LOW);  
-  
-  
+  CompValue = 0;
+  if( RL2Val != "Nan"){
+    CompValue = GetValue(Relay2_Val);
+    //if((CompValue < RL2Min)&& RELAY2) RELAY2 = 0;
+    //if((CompValue > RL2Max)&& !RELAY2) RELAY2 = 1;  
+    if(CompValue > RL2Max && !digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,HIGH);
+    if(CompValue < RL2Min &&  digitalRead(RELAY_OUT_2) ) digitalWrite(RELAY_OUT_2,LOW);  
+  }
+  else{
+       digitalWrite(RELAY_OUT_2,LOW);  
+  }
   Serial.print("RL2Min: ");Serial.println(RL2Min);
   Serial.print(RL2Val+":  ");Serial.print(CompValue);
   Serial.print("      RELAY2: ");Serial.println(RELAY_OUT_2);

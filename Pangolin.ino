@@ -16,28 +16,16 @@
 
 #define ARM_MATH_CM0PLUS
 
- #define ARDUINO_MEGA // 8 bit AVR
- //#define ARDUINO_DUE // ARM Cortex M3
+ //#define ARDUINO_MEGA // 8 bit AVR
+ #define ARDUINO_DUE // ARM Cortex M3
 
 //#include <Wire.h>
 //#include <SPI.h>
 #include <SD.h>
-#include <EEPROM.h>
-#include <avr/wdt.h>
-
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Defs.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Variables.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\RTC.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\SDCard.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\UserInt.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Display.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Sensors.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\ADE9153.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Menu.h"
-#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Functions.h"
-
-// C:\Projects\Pangolin\..   Atmel Studio Project Path
-// C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths   
+  #ifdef ARDUINO_MEGA // 8 bit AVR
+  #include <EEPROM.h>
+  #include <avr/wdt.h>
+  #endif
 
 #ifdef ARDUINO_DUE
 void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
@@ -55,6 +43,21 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
 }
 #endif
 
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Defs.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Variables.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\RTC.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\SDCard.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\UserInt.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Display.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Sensors.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\ADE9153.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Menu.h"
+#include  "C:\Users\Yagciilk\Documents\Arduino\Pangolin\Functions.h"
+
+// C:\Projects\Pangolin\..   Atmel Studio Project Path
+// C:\Projects\Pangolin\Pangolin\ArduinoCore\include\libraries\...  Atmel Studio Toolchain Compiler Lib Paths   
+
+
 
 
 void setup() {
@@ -62,16 +65,7 @@ void setup() {
 //  if(DisplayInitDelay == OFF)DisplayInitDelay = ON;  
 }
 
-#ifdef ARDUINO_DUE
-void TC3_Handler(){
-        TC_GetStatus(TC1, 0);
-        digitalWrite(LED_GREEN, digitalRead(LED_GREEN) ^ 1);  
-        //digitalWrite(13, l = !l);
-}
-#endif
-
 // interrupt vector
-
     #ifdef ARDUINO_MEGA
 ISR(TIMER1_OVF_vect){        // interrupt service routine that wraps a user defined function supplied by attachInterrupt
  //   TCNT1 = 34286;            // preload timer for 500mSec
@@ -139,6 +133,9 @@ void TC3_Handler(){
 // the loop function runs over and over again forever
 void loop() {
     Common_Loop(); 
-     wdt_reset();
-     wdt_enable(WDTO_8S);
+       #ifdef ARDUINO_MEGA // 8 bit AVR 
+ 
+        wdt_reset();
+         wdt_enable(WDTO_8S);
+     #endif
 }       

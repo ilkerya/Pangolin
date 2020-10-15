@@ -133,16 +133,18 @@ const char* myName() {
   char *name = "Ilker";
   return name;
 }
+#define MAXNOCHAR 4
 void UpdateProperLine(byte Index, byte Line){
     String str = String(Index)+ ".";
+    String Tempstr;
     switch(Index){
       case 0: str = "";//// show nothing                 
       break;    
-      case 1: str += " FW " + FW_Version;  // fw version compile time             
-      break;
-      case 2: str += " Dev Id: " + EE_Id_EString;  // device id           
-      break;
-      case 3:   
+    //  case 1: str += " FW " + FW_Version;  // fw version compile time             
+   //   break;
+   //   case 2: str += " Dev Id: " + EE_Id_EString;  // device id           
+   //   break;
+      case 1:   
           if (!isnan(Values.TemperatureSi072_Ch1)) {
             str += String(Values.TemperatureSi072_Ch1,1);
             str += " C";  DispExpSens1 = ON;                           
@@ -156,7 +158,7 @@ void UpdateProperLine(byte Index, byte Line){
           str += ' ' + Sensor1_Id;
           
      break;
-     case 4: //str = "4."; // temp sensor2
+     case 2: //str = "4."; // temp sensor2
           if (!isnan(Values.TemperatureSi072_Ch2)) {
             str += String(Values.TemperatureSi072_Ch2,1);
             str += " C";   DispExpSens2 = ON;               //  str += '°'; 
@@ -169,7 +171,7 @@ void UpdateProperLine(byte Index, byte Line){
           else   str +="----";
           str += ' ' + Sensor2_Id;              
      break;
-     case 5: //str = "5."; // temp sensor3
+     case 3: //str = "5."; // temp sensor3
          if (!isnan(Values.TemperatureSi072_Ch3)) {
             str += String(Values.TemperatureSi072_Ch3,1);
             str += " C";    DispExpSens3 = ON;
@@ -182,7 +184,7 @@ void UpdateProperLine(byte Index, byte Line){
         else   str +="----";   // 10 lines
         str += ' ' + Sensor3_Id;             
      break;
-     case 6:       
+     case 4:       
               #ifdef VOLTAGE_MEASURE_EXISTS
                // str += " " + String(Mains_Volt) + "V ";  
                 str += " " + String(Mains_Volt) + "V ";  
@@ -201,7 +203,7 @@ void UpdateProperLine(byte Index, byte Line){
               else  str += "--Hz"; //4
             #endif 
      break;      
-     case 7:    
+     case 5:    
 
              #ifdef AD9153_PROTOTYPE 
           //   str += "7. " + String(powerVals.ActivePowerValue/1000)+ " w "; // 3/4/3
@@ -210,7 +212,7 @@ void UpdateProperLine(byte Index, byte Line){
                
             #endif 
      break; 
-     case 8:   
+     case 6:   
             #ifdef PM25_DUST_SENSOR_EXISTS  
             
             str += " PM2.5: ";
@@ -220,13 +222,27 @@ void UpdateProperLine(byte Index, byte Line){
             #endif 
                  
      break;  
-     case 9:  
-          str += "  RL1: " +String(digitalRead(RELAY_OUT_1)); //7 + 1
-          str += "  RL2: " +String(digitalRead(RELAY_OUT_2));; //7 + 1  
-
-          // 2 + 8 + 8 = 18
-     
+     case 7:  
+          str += "R1:" +String(digitalRead(RELAY_OUT_1))+ " "; //7 + 1     
+         // str +=  String((unsigned int)RL1Min) +   RLlVal  +  String((unsigned int)RL1Max);
+          for(int i = 0; i < MAXNOCHAR; i++){
+            str += RlStr2[i];  // Limit Str length to 4 20.4 // 124. // 1378
+          }      
+          str += " " +  RLlVal + " ";   
+          for(int i = 0; i < MAXNOCHAR; i++){
+            str += RlStr4[i];
+          }  
       break;  
+      case 8:    
+          str += "R2:" +String(digitalRead(RELAY_OUT_2))+ " "; //7 + 1
+          for(int i = 0; i < MAXNOCHAR; i++){
+            str += RlStr6[i];  // Limit Str length to 4 20.4 // 124. // 1378
+          }      
+          str += " " +  RL2Val + " "; 
+          for(int i = 0; i < MAXNOCHAR; i++){
+            str += RlStr8[i];
+          }  
+      break;       
              
     default: str = "default";
     break; 

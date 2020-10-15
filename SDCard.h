@@ -281,8 +281,10 @@ void SD_Card_Header_Preparation(){
           dataString += "PM2.5,PM10,"; 
       #endif  
        #ifdef AD9153_PROTOTYPE 
-          dataString += "(A)rms,(V)rms,Power(W),PF,Freq."; 
+          dataString += "(A)rms,(V)rms,Power(W),PF,Freq.,"; 
       #endif  
+
+      dataString += "RL1,RL2";
             
 }
 void SD_Card_Data_Preparation(){
@@ -329,9 +331,11 @@ void SD_Card_Data_Preparation(){
         #ifdef AD9153_PROTOTYPE 
           dataString += String(Values.Current)+ ',' + String(Values.Voltage)+ ',';
           dataString += String(Values.ActivePower)+ ',' + String(Values.PowerFactor)+ ',';
-          if((Values.Voltage) > 32) dataString += String(Values.Frequency);
-          else                                    dataString += "--";
-      #endif             
+          if((Values.Voltage) > 32) dataString += String(Values.Frequency)+ ',';
+          else                                    dataString += "--,";
+      #endif     
+
+           dataString +=  String(digitalRead(RELAY_OUT_1))+ ','+ String(digitalRead(RELAY_OUT_2));  
   
 }
 

@@ -173,23 +173,25 @@ void UpdateDispSpChar(byte Index,byte Line){
     switch(Index){
       case 0: //// show nothing                 
       break;    
+      /*
       case 1:    //"FW " + FW_Version;  // fw version compile time             
       break;
       case 2:        // "Dev Id:  " + EE_Id_EString;  // device id           
       break;
-      case 3:
+      */
+      case 1:
            if(DispExpSens1 ){
                 DispExpSens1 = OFF;
                 display.write(247); // 5th character  '°';   
           }   
       break;    
-      case 4:
+      case 2:
              if(DispExpSens2 ){
                 DispExpSens2 = OFF;
                 display.write(247); // 5th character  '°';   
             } 
       break;     
-      case 5:      
+      case 3:      
            if(DispExpSens3 ){
                 DispExpSens3 = OFF;
                 display.write(247); // 5th character  '°';   

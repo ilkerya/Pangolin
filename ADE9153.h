@@ -104,8 +104,10 @@ void readandwrite()
   Serial.println("");
 }
 void ADE9153_Calibration() {
+    #ifdef ARDUINO_MEGA // 8 bit AVR  
       wdt_reset();
       wdt_enable(WDTO_8S);
+      #endif
     Serial.println("Autocalibrating Current Channel_1");        
     ade9153A.StartAcal_AINormal();
     Serial.println("Autocalibrating Current Channel_2");

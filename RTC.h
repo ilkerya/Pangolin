@@ -216,7 +216,11 @@ void RTC_TimeClock(){
           Code += (receivedChars[6]<<4);
           Code += receivedChars[7];
     */      
-       
+     
+
+   
+
+  #ifdef ARDUINO_MEGA // 8 bit AVR 
           Serial.print("EECode:");
 
           EEPROM.write(4, receivedChars[4]);// high byte
@@ -231,7 +235,7 @@ void RTC_TimeClock(){
            EEPROM.write(7, receivedChars[7]);// high byte         
           Serial.println(receivedChars[7]);
 
-
+  #endif
           
         //  Serial.println(Code);  
 /*

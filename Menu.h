@@ -36,7 +36,7 @@ void UpdateInfoQue(void){
      DispRollIndex[2] = DispRollIndex[1];
      DispRollIndex[1] = DispRollIndex[0];
      DispRollIndex[0]++;
-     if (DispRollIndex[0]  > 9) DispRollIndex[0] = 1;
+     if (DispRollIndex[0]  > 8) DispRollIndex[0] = 1;
 }
 void UpdateDispRoll(void){
     if(SensorRollTimer){
@@ -70,72 +70,90 @@ void LogEnable(bool Enable) {
 
 
 void EE_SerNoWrite2_EE(unsigned int SerialNo) {
+   #ifdef ARDUINO_MEGA // 8 bit AVR
   //  EEPROM.write(Adr, byte);
   // byte t = 0XFFFF & (SerialNo>>8);
-  byte t;
-  t = (byte)SerialNo;
-  EEPROM.write(4, t);// low byte
-  t = (byte)(SerialNo >> 8);
-  EEPROM.write(5, t);// high byte
+    byte t;
+    t = (byte)SerialNo;
+    EEPROM.write(4, t);// low byte
+    t = (byte)(SerialNo >> 8);
+    EEPROM.write(5, t);// high byte
+   #endif
 
 }
 void EEDisplaySleepRead(void) {
-    byte Mode = EEPROM.read(SLEEP_LOG);// OFF
-    if(Mode == OFF)DispEnable(OFF,0);
-    if(Mode == ON)DispEnable(ON,100);    
+     #ifdef ARDUINO_MEGA // 8 bit AVR
+      byte Mode = EEPROM.read(SLEEP_LOG);// OFF
+      if(Mode == OFF)DispEnable(OFF,0);
+      if(Mode == ON)DispEnable(ON,100);  
+    #endif  
 }
 
 void EEDisplaySleep(bool Mode) {
-    if (Mode == OFF)EEPROM.write(SLEEP_LOG, OFF); // OFF
-    else EEPROM.write(SLEEP_LOG, ON);// ON
+    #ifdef ARDUINO_MEGA // 8 bit AVR
+      if (Mode == OFF)EEPROM.write(SLEEP_LOG, OFF); // OFF
+      else EEPROM.write(SLEEP_LOG, ON);// ON
+    #endif
 }
 
 
 void EESetResetLog(bool Mode) {
-  if (Mode == OFF)EEPROM.write(ADDRES_LOG, OFF); // OFF
-  else EEPROM.write(ADDRES_LOG, SampleTime);// ON
+   #ifdef ARDUINO_MEGA // 8 bit AVR 
+      if (Mode == OFF)EEPROM.write(ADDRES_LOG, OFF); // OFF
+      else EEPROM.write(ADDRES_LOG, SampleTime);// ON
+   #endif
 }
 void EESetSampleTimeLog(byte Sample) {
-  EEPROM.write(ADDRES_LOG, Sample);// ON
+   #ifdef ARDUINO_MEGA // 8 bit AVR 
+      EEPROM.write(ADDRES_LOG, Sample);// ON
+   #endif
 }
+
+
 
 
 void EEReadLog(void) {
-  byte Mode = EEPROM.read(ADDRES_LOG);// OFF
-  switch (Mode) {
-    case TASK_500MSEC: SDCard.LogStatus = ON; SampleTime =  Mode;
+   #ifdef ARDUINO_MEGA // 8 bit AVR
+    byte Mode = EEPROM.read(ADDRES_LOG);// OFF
+    switch (Mode) {
+      case TASK_500MSEC: SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_1SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_1SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_2SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_2SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_5SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_5SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_10SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_10SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_20SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_20SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    case TASK_60SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_60SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
       break;
-    default: SDCard.LogStatus = OFF; SampleTime =  TASK_2SEC;
+      default: SDCard.LogStatus = OFF; SampleTime =  TASK_2SEC;
       break;
-  }
+    }
+   #endif
 }
 void UpdateDeviceEE() {
-  char c;
-  EE_Id_EString = "";
-  c = (char)EEPROM.read(4);
-  EE_Id_EString += String(c);
-  c = (char)EEPROM.read(5);
-  EE_Id_EString += String(c);
-  c = (char)EEPROM.read(6);
-  EE_Id_EString += String(c);
-  c = (char)EEPROM.read(7);
-  EE_Id_EString += String(c);
-  Serial.print(" Device Id: ");
-  Serial.println(EE_Id_EString);
+   #ifdef ARDUINO_MEGA // 8 bit AVR 
+    char c;
+    EE_Id_EString = "";
+    c = (char)EEPROM.read(4);
+    EE_Id_EString += String(c);
+    c = (char)EEPROM.read(5);
+    EE_Id_EString += String(c);
+    c = (char)EEPROM.read(6);
+    EE_Id_EString += String(c);
+    c = (char)EEPROM.read(7);
+    EE_Id_EString += String(c);
+    Serial.print(" Device Id: ");
+    Serial.println(EE_Id_EString);
+  #endif
 }
 void ResetCasePrint() {
+#ifdef ARDUINO_MEGA // 8 bit AVR 
+    
   byte RESET_CASE = MCUSR;
   Serial.print("MCUSR: ");
   Serial.println(RESET_CASE);
@@ -169,6 +187,8 @@ void ResetCasePrint() {
   }
   //Clear register
   MCUSR = 0x00;
+
+    #endif
 }
 
 void Key_Functions(void) {
@@ -436,7 +456,7 @@ void EnterMenuKey(void) {
     case MENU2_SUB7 :  SampleTime = TASK_60SEC; EESetSampleTimeLog(TASK_60SEC);
       Menu =  MENU_NULL;//MENU2;//
       break;
-    case MENU3_SUB1 :  DispEnable(ON,20);EEDisplaySleep(ON);
+    case MENU3_SUB1 :  DispEnable(ON,40);EEDisplaySleep(ON);
       Menu =  MENU_NULL;//MENU3
       break;
     case MENU3_SUB2 :  DispEnable(OFF,0);EEDisplaySleep(OFF);

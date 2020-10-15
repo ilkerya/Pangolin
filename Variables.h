@@ -59,8 +59,13 @@ byte DispRollIndex[4] = {1,0,0,0};
 //8 7 6 5
 //1 8 7 6
 //2 1 8 7
-//3 2 1 8
+//3 2 1 8 
 
+float RL1Min, RL1Max, RL2Min,RL2Max,CompValue;
+String RLlVal, RL2Val;
+String Relay1str, RlStr2, RlStr4, Relay2str, RlStr6,  RlStr8;
+#define ELEMENTS 12
+String KeyWords[12] = {"Tmp1","Tmp2","Tmp3","Hum1","Hum2","Hum3","PM25","PM10","Cur","Volt","Powr","PF",};
 
 unsigned int KeyLogger=0;
 
