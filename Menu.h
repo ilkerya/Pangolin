@@ -225,7 +225,8 @@ void Key_Functions(void) {
     KeyLogger = 4;
 #endif
     DisplayWakeUp();
-    DownMenuKey();
+    //DownMenuKey();
+    UpMenuKey();   
     KeyTimeOutStart();
     return;
   }
@@ -256,13 +257,16 @@ void DownMenuKey(void) {
             KeySensonsorRoll();
     
       break;
-    case MENU1 : Menu = MENU3; //
+    case MENU1 : Menu = MENU5; //
       break;
     case MENU2 : Menu = MENU1;
       break;
     case MENU3 : Menu = MENU2;
       break;
-
+    case MENU4 : Menu = MENU3;
+      break;
+     case MENU5 : Menu = MENU4;
+      break;  
 
     case MENU1_SUB1 :  Menu =  MENU1_SUB2;//
       break;
@@ -286,6 +290,23 @@ void DownMenuKey(void) {
       //   case MENU2_SUB8 :  Menu =  MENU2_SUB7;//
       break;
 
+
+    case MENU5_SUB1 :  
+      break;
+    case MENU5_SUB2 :  
+      break;
+    case MENU5_SUB3 :  
+      break;
+    case MENU5_SUB4 :  
+      break;
+    case MENU5_SUB5 :  
+      break;
+    case MENU5_SUB6 :  
+      break;
+     case MENU5_SUB7 :      
+      break;
+       case MENU2_SUB8 :  
+      break;
     case MENU3_SUB1 :  Menu =  MENU3_SUB2;//
       break;
     case MENU3_SUB2 :  Menu =  MENU3_SUB1;//
@@ -302,14 +323,26 @@ void UpMenuKey(void) {
   DispExtTimeout();
   switch (Menu) {
     case MENU_NULL : Menu = MENU_NULL;
+          KeySensonsorRoll();
       break;
     case MENU1 : Menu = MENU2; //
       break;
     case MENU2 : Menu = MENU3;
       break;
-    case MENU3 : Menu = MENU1;
+    case MENU3 : Menu = MENU4;
+      break;
+    case MENU4 : Menu = MENU5;
+      break;
+    case MENU4_SUB1 :   Menu = MENU4_SUB2; 
+
+      break;  
+    case MENU4_SUB2 :   Menu = MENU4_SUB1; 
+
       break;
 
+      
+     case MENU5 : Menu = MENU1;
+      break;     
 
     case MENU1_SUB1 :  Menu =  MENU1_SUB2;//
       break;
@@ -330,7 +363,7 @@ void UpMenuKey(void) {
       break;
     case MENU2_SUB7 :  Menu =  MENU2_SUB1;//
       break;
-      //  case MENU2_SUB8 :  Menu =  MENU2_SUB1;//
+       case MENU2_SUB8 :  
       break;
 
     case MENU3_SUB1 :  Menu =  MENU3_SUB2;//
@@ -338,6 +371,40 @@ void UpMenuKey(void) {
     case MENU3_SUB2 :  Menu =  MENU3_SUB1;//
       break;
 
+
+    case MENU5_SUB1 :  
+        DateTimeBuf.Year++;
+        if (DateTimeBuf.Year > 2030)DateTimeBuf.Year = 2020;
+        if (DateTimeBuf.Year < 2020)DateTimeBuf.Year = 2020;
+      break;
+    case MENU5_SUB2 :
+         DateTimeBuf.Month++;
+        if (DateTimeBuf.Month > 12)DateTimeBuf.Month = 1;
+        //if (DateTimeBuf.Month < 1)DateTimeBuf.Month = 1;
+    
+      break;
+    case MENU5_SUB3 :  
+          DateTimeBuf.Day ++;
+        if (DateTimeBuf.Day > 31)DateTimeBuf.Day = 1;
+        //if (DateTimeBuf.Day < 1)DateTimeBuf.Day = 1;
+      break;
+    case MENU5_SUB4 :
+        DateTimeBuf.Hour ++;
+        if (DateTimeBuf.Hour >= 24)DateTimeBuf.Hour = 0;
+       // if (DateTimeBuf.Hour < 1)DateTimeBuf.Hour = 1;  
+      break;
+    case MENU5_SUB5 :  
+              DateTimeBuf.Minute ++;
+        if (DateTimeBuf.Minute >= 60)DateTimeBuf.Minute = 0;
+      //  if (DateTimeBuf.Minute < 1)DateTimeBuf.Minute = 1;  
+      break;
+    case MENU5_SUB6 :  
+         DateTimeBuf.Second ++;
+        if (DateTimeBuf.Second >= 60)DateTimeBuf.Second = 0;    
+      break;
+
+     case MENU5_SUB7 :      
+      break;
 
     default: Menu = MENU_NULL;
 
@@ -357,7 +424,16 @@ void EscMenuKey(void) {
       break;
     case MENU3 : Menu = MENU_NULL;
       break;
+    case MENU4 : Menu = MENU_NULL;
+      break;
+    case MENU4_SUB1 :   Menu = MENU4; 
 
+      break;  
+    case MENU4_SUB2 :   Menu = MENU4; 
+
+      break;       
+    case MENU5 : Menu = MENU_NULL;
+      break;
 
     case MENU1_SUB1 :  Menu =  MENU1;//
       break;
@@ -378,7 +454,7 @@ void EscMenuKey(void) {
       break;
     case MENU2_SUB7 :  Menu =  MENU2;//
       break;
-      // case MENU2_SUB8 :  Menu =  MENU2;//
+      case MENU2_SUB8 : 
       break;
 
     case MENU3_SUB1 :  Menu =  MENU3;//
@@ -387,6 +463,21 @@ void EscMenuKey(void) {
       break;
 
 
+    case MENU5_SUB1 :  Menu = MENU5;
+      break;
+    case MENU5_SUB2 :  Menu = MENU5_SUB1;
+      break;
+    case MENU5_SUB3 :  Menu = MENU5_SUB2;
+      break;
+    case MENU5_SUB4 :  Menu = MENU5_SUB3;
+      break;
+    case MENU5_SUB5 :  Menu = MENU5_SUB4;
+      break;
+    case MENU5_SUB6 :  Menu = MENU5_SUB5;
+      break;
+     case MENU5_SUB7 :      
+      break;
+      
     default: Menu = MENU_NULL;
 
   }
@@ -396,8 +487,35 @@ void EnterMenuKey(void) {
   DispExtTimeout();
   switch (Menu) {
     case MENU_NULL : Menu = MENU1;
-
+          break;
+    case MENU4 :   Menu = MENU4_SUB1;  
+       
       break;
+    case MENU4_SUB1 :   Menu = MENU4_SUB2; 
+
+      break;  
+    case MENU4_SUB2 :   Menu = MENU4_SUB1; 
+
+      break;      
+    case MENU5 :        Menu = MENU5_SUB1;
+        DateTimeBuf.Init = ON;       
+      break;
+     case MENU5_SUB1 :  Menu = MENU5_SUB2;   //Year  
+      break;     
+     case MENU5_SUB2 :  Menu = MENU5_SUB3; // Month
+      break;        
+     case MENU5_SUB3 :  Menu = MENU5_SUB4; // Day
+      break;  
+     case MENU5_SUB4 :  Menu = MENU5_SUB5; // Hour
+      break;  
+     case MENU5_SUB5 :  Menu = MENU5_SUB6; // Minute
+      break;
+     case MENU5_SUB6 :  Menu = MENU5_SUB7; //Second
+          DateTimeBuf.RTC_Update = ON;    
+      break;
+     case MENU5_SUB7 :      
+      break;
+          
     case MENU1 : //Menu = MENU1MIN; // go to sub menu  // sd kart log on
       if (SDCard.LogStatus == ON) Menu = MENU1_SUB2; //already logging
       else  Menu = MENU1_SUB1;
@@ -423,45 +541,49 @@ void EnterMenuKey(void) {
       }
       break;
     case MENU3 : // Menu = MENU3MIN;
-
       if (DisplaySleepEnable == ON) Menu = MENU3_SUB2; //already logging
       else  Menu = MENU3_SUB1;
       break;
-
-
     case MENU1_SUB1 :  LogEnable(ON); SDCard.LogStatus = ON; EESetResetLog(ON);
       Menu =  MENU_NULL;//MENU1
       break;
     case MENU1_SUB2 : LogEnable(OFF); SDCard.LogStatus = OFF; EESetResetLog(OFF); // default
       Menu =  MENU_NULL;//MENU1
       break;
+
+      
     case MENU2_SUB1 :  SampleTime = TASK_500MSEC ; EESetSampleTimeLog(TASK_500MSEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB2 : SampleTime = TASK_1SEC; EESetSampleTimeLog(TASK_1SEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB3 :  SampleTime = TASK_2SEC; EESetSampleTimeLog(TASK_2SEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB4 : SampleTime = TASK_5SEC; EESetSampleTimeLog(TASK_5SEC); // default
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB5 :  SampleTime = TASK_10SEC; EESetSampleTimeLog(TASK_10SEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB6 :  SampleTime = TASK_20SEC; EESetSampleTimeLog(TASK_20SEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
     case MENU2_SUB7 :  SampleTime = TASK_60SEC; EESetSampleTimeLog(TASK_60SEC);
-      Menu =  MENU_NULL;//MENU2;//
+      Menu =  MENU2_SUB8;//MENU2;//
       break;
+    case MENU2_SUB8 :  
+      
+      break;
+      
     case MENU3_SUB1 :  DispEnable(ON,40);EEDisplaySleep(ON);
       Menu =  MENU_NULL;//MENU3
       break;
     case MENU3_SUB2 :  DispEnable(OFF,0);EEDisplaySleep(OFF);
       Menu =  MENU_NULL;//MENU3
       break;
-    default: Menu = MENU_NULL;
+ 
+    default: Menu = MENU_NULL; 
   }
 }

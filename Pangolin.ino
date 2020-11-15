@@ -5,7 +5,7 @@
  //for setting date&time open arduino serial monitor and send the data stream
  //   Year,Month,Date,Hour,Minute;Second
  //   2020,05,27,21,14,23
- //  2020,09,09,00,54,30
+ //  2020,11,09,21,02,10
  // EEEEf567 
  // 115200 baud Both NL & CR
  // put leading zero for numbers less than 10
@@ -16,8 +16,8 @@
 
 #define ARM_MATH_CM0PLUS
 
- //#define ARDUINO_MEGA // 8 bit AVR
- #define ARDUINO_DUE // ARM Cortex M3
+ #define ARDUINO_MEGA // 8 bit AVR
+ //#define ARDUINO_DUE // ARM Cortex M3
 
 //#include <Wire.h>
 //#include <SPI.h>

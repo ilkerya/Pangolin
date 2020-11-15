@@ -263,6 +263,7 @@ void UpdateProperLine(byte Index, byte Line){
 
 
 void SDCard_or_File(){
+
     switch(DisplayValueTimer){
       case 0:
       case 2:
@@ -283,8 +284,15 @@ void SDCard_or_File(){
     }      
 }
 void UpdateSD_LogTime(){
+    if(SDCard.PauseTimer){
+      Display_Line2 = "SD Error   Retry-> "; //18
+      Display_Line2 += String(SDCard.PauseTimer);//13
+     // " Try in"  //7
+      return;     
+  }
+  
     if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
-    else Display_Line2 = "SD problem! ";
+    else Display_Line2 = "SD Error    ";
     Display_Line2 += "   "; // 3
     //  String DispSample="";
       switch(SampleTime){

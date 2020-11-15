@@ -8,7 +8,16 @@ RTC_PCF8523 rtc; // I2c Addres 0x68
 //char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesdy", "Wedns.", "Thurs.", "Friday", "Satur."};
 
+
+
+
 void RTC_TimeClock(){
+
+  if(DateTimeBuf.RTC_Update == ON){
+    DateTimeBuf.RTC_Update = OFF;
+    rtc.adjust(DateTime(DateTimeBuf.Year, DateTimeBuf.Month, DateTimeBuf.Day, DateTimeBuf.Hour, DateTimeBuf.Minute, DateTimeBuf.Second));
+    return;
+  }
 
   deBugString = "RTC_TClk_1";
     DateTime now = rtc.now();
@@ -50,6 +59,8 @@ void RTC_TimeClock(){
      Str_DispTime +=  ','; 
 
 
+
+
     Str_Date = "";
     Str_Date += String(now.year(),DEC);   
     Str_Date += '.';    
@@ -61,7 +72,7 @@ void RTC_TimeClock(){
     // Str_Date += ''; 
      
      Str_Time = "";
-    if(now.hour()<10)Str_Time += ' ';
+    if(now.hour()<10)Str_Time += '0';
      Str_Time += String(now.hour(),DEC);
       Str_Time += ':';    
     if(now.minute()<10)Str_Time += '0';   
@@ -72,6 +83,16 @@ void RTC_TimeClock(){
    //  Str_Time +=  ''; 
 
 
+    if(DateTimeBuf.Init == ON){
+      DateTimeBuf.Init = OFF;
+      DateTimeBuf.Year = now.year();
+      DateTimeBuf.Month = now.month();
+      DateTimeBuf.Day = now.day();
+      DateTimeBuf.Hour = now.hour();
+      DateTimeBuf.Minute = now.minute();
+      DateTimeBuf.Second = now.second();
+    }
+    
 
 /*
     Serial.print(" since midnight 1/1/1970 = ");
@@ -203,7 +224,8 @@ void RTC_TimeClock(){
               */          
               rtc.adjust(DateTime(Year, Month, Day, Hour, Minute, Second));
         //      Serial.println("Date & Time Adjusted");
-               
+               Menu = MENU5_SUB7;
+               DispExtTimeout();
           }
         if((Timer == 10) && (receivedChars[0] == 'E' )&&(receivedChars[1] == 'E') && (receivedChars[2] == 'E')&&  (receivedChars[3] == 'E' )){
           // EE Serial Code Write

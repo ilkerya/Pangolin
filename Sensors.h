@@ -167,10 +167,16 @@ void PrintPMValues(byte PMError, byte PMCount){
               }
           }       
       }
-      Values.PM25 =  (float)(PM25Val / PMCount)/10;
-      Values.PM10 =  (float)(PM10Val / PMCount)/10;
-      if(Values.PM25 >= 250)Values.PM25 = 250;
-      if(Values.PM10 >= 250)Values.PM25 = 250;
+      if(PMCount){
+          Values.PM25 =  (float)(PM25Val / PMCount)/10;
+          Values.PM10 =  (float)(PM10Val / PMCount)/10;
+          if(Values.PM25 >= 250)Values.PM25 = 250;
+          if(Values.PM10 >= 250)Values.PM25 = 250;       
+      }
+      else{
+          Values.PM25 =  0;
+          Values.PM10 =  0;   
+      }
       PrintPMValues(PMError,PMCount);  
     }
 }

@@ -115,6 +115,9 @@ struct
 {
   bool LogStatus;  // log on or off
   bool LogStatusInit; // log on  init case
+  bool Pause;  // At SD Problem Try Again
+  unsigned int PauseTimer;
+  unsigned int PauseCount;  
   byte Status; 
 }SDCard;
 
@@ -124,7 +127,7 @@ struct
 //bool SD_KartStop = 0;
 //int SDCardStatus = 0;
 
-bool DispExpLin8_1 =0;
+
 bool DispExpSens1 =0;
 bool DispExpSens2 =0;
 bool DispExpSens3 =0;
@@ -238,8 +241,8 @@ struct
   float Pressure; //  
   float TemperatureBMP; //  
   float Altitude; //
-  float PM25; //
-  float PM10; //   
+  float PM25=0; //
+  float PM10=0; //   
   float WindRaw;   // 35        
   unsigned int WindMPH;    // 31
   unsigned int WindTemp;   // 35
@@ -267,9 +270,30 @@ void EEReadLog(void);
 void EESetSampleTimeLog(byte Sample);
 void EEDisplaySleep(bool Mode);
 
+struct
+{
+  unsigned int Year=0; 
+  unsigned int Month=0; 
+  unsigned int Day=0;                       
+  unsigned int Hour=0; 
+  unsigned int Minute=0; 
+  unsigned int Second=0;
+  bool Init=0; 
+  bool RTC_Update=0;  
+ // bool Disp_Update=0;  
+  unsigned int Disp_UpdateTimer=0; 
+  unsigned int Disp_Flash=0;     
+}DateTimeBuf;
 
 
+struct
+{
 
+  bool RTC_Update=0;  
+ // bool Disp_Update=0;  
+  unsigned char MenuTimeout=0; 
+  unsigned char Flash=0;     
+}Display;
 /*
 
 // for wind sensor

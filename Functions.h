@@ -87,6 +87,14 @@ void Common_Loop(){
 
     if (SampleTime == TASK_1SEC) Log_Data_Write_SD();
 
+     if((Menu == MENU5_SUB7)||(Menu == MENU2_SUB8) ){
+      Display.MenuTimeout++;
+      if(Display.MenuTimeout > 4){
+        Display.MenuTimeout = 0;
+        Menu = MENU_NULL;
+      }
+    }
+
     
 /*
       if( (Values.PM25 > 64) &&  !digitalRead(RELAY_OUT_1) ) digitalWrite(RELAY_OUT_1,HIGH);
@@ -106,6 +114,10 @@ void Common_Loop(){
 
       UpdateDispRoll();
       PrintDisplayBuffer();
+
+      if(SDCard.PauseTimer){
+         SDCard.PauseTimer--;    
+      }
 
   }
   if (LoopTask_5Sec) {
@@ -366,6 +378,7 @@ void MicroInit() {
 
 #ifndef DEBUG_SIMULATOR_MODE
   Sensors_PeripInit();
+  DateTimeBuf.Init = ON;
   DisplayInit();
     
 #endif
@@ -432,7 +445,6 @@ void Parse_FileString(){
     }
   }
  
-
     index = ELEMENTS;
     Relay1str.trim();//remove leadig & last space characters
     if(Relay1str == "Relay1"){

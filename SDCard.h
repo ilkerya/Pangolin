@@ -84,10 +84,17 @@ void ReadConfigFile(){
 
 
 void SD_CardLogTask(){
+  /*
   if(!SDCard.LogStatus){ // log of 
       SDCard.LogStatusInit = 0; // In order to start with the header next time
       return;
   }
+*/
+    if(SDCard.PauseTimer){  
+      return;
+    }
+
+  
     if(!SDCard.LogStatusInit){
       SDCard.LogStatusInit = 1;
       // put header + data           
@@ -95,12 +102,14 @@ void SD_CardLogTask(){
          SD_Card_Init();            
          dataString ="";
          SD_Card_Header_Preparation();dataString += "\n";         
-          SD_Card_Data_Preparation();         
+          SD_Card_Data_Preparation();   
+              
     }
     else{ // put  only data          
         SD_Card_Init();                  
         dataString ="";  
-        SD_Card_Data_Preparation();                                
+        SD_Card_Data_Preparation(); 
+        SDCard.PauseCount = OFF;                                 
     }   
     File dataFile = SD.open(LOG_FILE, FILE_WRITE);
     // if the file is available, write to it:
@@ -209,8 +218,50 @@ void SD_Card_Init(){
     // don't do anything more:
     //while (1);
       SDCard.Status = SD_NOT_Present;
-      SDCard.LogStatus = OFF; // stop logging
-  //    SD_Card_Reset = OFF;//unknown 
+     // SDCard.LogStatus = OFF; // stop logging
+
+      switch(SDCard.PauseCount){
+          case 0: SDCard.PauseTimer = 10;SDCard.PauseCount++;
+          break;
+           case 1: SDCard.PauseTimer = 12;SDCard.PauseCount++;
+          break;
+           case 2: SDCard.PauseTimer = 14;SDCard.PauseCount++;
+          break;
+           case 3: SDCard.PauseTimer = 16;SDCard.PauseCount++;
+          break;
+          case 4: SDCard.PauseTimer = 18;SDCard.PauseCount++;
+          break;
+           case 5: SDCard.PauseTimer = 20;SDCard.PauseCount++;
+          break;
+          case 6: SDCard.PauseTimer = 22;SDCard.PauseCount++;
+          break;
+           case 7: SDCard.PauseTimer = 24;SDCard.PauseCount++;
+          break;
+          case 8: SDCard.PauseTimer = 26;SDCard.PauseCount++;
+          break;
+           case 9: SDCard.PauseTimer = 28;SDCard.PauseCount++;
+          break;   
+           case 10: SDCard.PauseTimer = 30;SDCard.PauseCount++;
+          break; 
+           case 11: SDCard.PauseTimer = 32;SDCard.PauseCount++;
+          break;
+          case 12: SDCard.PauseTimer = 34;SDCard.PauseCount++;
+          break;
+           case 13: SDCard.PauseTimer = 36;SDCard.PauseCount++;
+          break;
+          case 14: SDCard.PauseTimer = 38;SDCard.PauseCount++;
+          break;
+           case 15: SDCard.PauseTimer = 40;SDCard.PauseCount++;
+          break;   
+           case 16: SDCard.PauseTimer = 42;SDCard.PauseCount++;
+          break;      
+          default: SDCard.PauseTimer = 50;
+          break;                                           
+      }
+      DispEnable(ON,(60-SDCard.PauseTimer));
+      //SDCard.PauseTimer = 15;
+      SDCard.LogStatusInit = OFF;
+      
   }
   else
      //Serial.println("card Ready For Logging."); 

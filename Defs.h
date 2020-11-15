@@ -1,3 +1,16 @@
+/*
+typedef  byte               uint8;
+typedef  signed char        int8;
+typedef  unsigned char      uint8;
+//typedef  signed short       int16;
+//typedef  unsigned short     uint16;
+typedef  signed int         int16;
+typedef  unsigned int       uint16;
+typedef  signed long        int32;
+typedef  unsigned long      uint32;
+typedef  signed long long   int64;
+typedef  unsigned long long uint64
+*/
  
 #include "RTClib.h"
 #include <Adafruit_GFX.h>
@@ -61,27 +74,25 @@
 
 #define  MAXSHOWLINE 6  // define how many lines for sensorts to show including fw info line 
 
+/*
 #define MENU_NULL 0
 #define MENU1   32
 #define MENU2   64
 #define MENU3   96
+#define MENU4   128
+#define MENU5   160
 
-#define MENU_MAINMIN  32
-#define MENU_MAINMAX  96
+//#define MENU_MAINMIN  32
+//#define MENU_MAINMAX  MENU5
 
-#define MENU_MAIN11 32  // +=32
-#define MENU_MAIN11 64
-#define MENU_MAIN11 96
-
-#define MENU1MIN  36
-#define MENU1MAX  40
+//#define MENU1MIN  36
+//#define MENU1MAX  40
 
 #define MENU1_SUB1 36 // +=4
 #define MENU1_SUB2 40
 
-
-#define MENU2MIN  68
-#define MENU2MAX  92
+//#define MENU2MIN  68
+//#define MENU2MAX  92
 
 #define MENU2_SUB1  68  // +=4
 #define MENU2_SUB2  72
@@ -92,13 +103,59 @@
 #define MENU2_SUB7  92
 //#define MENU2_SUB8  96
 
-#define MENU3MIN  100
-#define MENU3MAX  104
+//#define MENU3MIN  100
+//#define MENU3MAX  104
 
 #define MENU3_SUB1  100 // +=4
 #define MENU3_SUB2  104
 
-#define KEYDISP_TIMER 20
+#define MENU4_SUB1 132
+#define MENU4_SUB2 136
+
+#define MENU5_SUB1 164
+#define MENU5_SUB2 168
+#define MENU5_SUB3 172
+#define MENU5_SUB4 176
+#define MENU5_SUB5 180
+#define MENU5_SUB6 184
+#define MENU5_SUB7 188
+
+*/
+#define MENU_NULL 0
+#define MENU1   16
+#define MENU2   32
+#define MENU3   48
+#define MENU4   64
+#define MENU5   80
+
+#define MENU1_SUB1 17 // +=4
+#define MENU1_SUB2 18
+
+#define MENU2_SUB1  33  // +=4
+#define MENU2_SUB2  34
+#define MENU2_SUB3  35
+#define MENU2_SUB4  36
+#define MENU2_SUB5  37
+#define MENU2_SUB6  38
+#define MENU2_SUB7  39
+#define MENU2_SUB8  40
+
+#define MENU3_SUB1  49 // +=4
+#define MENU3_SUB2  50
+
+#define MENU4_SUB1 65
+#define MENU4_SUB2 66
+
+#define MENU5_SUB1 81
+#define MENU5_SUB2 82
+#define MENU5_SUB3 83
+#define MENU5_SUB4 84
+#define MENU5_SUB5 85
+#define MENU5_SUB6 86
+#define MENU5_SUB7 87
+#define MENU5_SUB8 88
+
+#define KEYDISP_TIMER 40
 
 #define OUT_PINOUT 2 // Out pin of the sensor
 #define RV_PINOUT 1 // RV output of the sensor
@@ -139,7 +196,7 @@ void EnterMenuKey(void);
 void DownMenuKey(void);
 void UpMenuKey(void);
 void SetSampling(unsigned int Time);
-void DispEnable(bool Enable);
+void DispEnable(bool Enable, byte Timer);
 void LogEnable(bool Enable);
 void  DispExtTimeout(void);
 void   DisplayMenu(void);
@@ -156,6 +213,8 @@ void Log_Data_Write_SD(void);
 void Parse_FileString(void);
 void Relay_loop(void) ;
 float GetValue(byte Relay);
+
+
 
 // C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries
 // Location of Main Librarires
