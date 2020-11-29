@@ -130,6 +130,8 @@ typedef  unsigned long long uint64
 
 #define MENU1_SUB1 17 // +=4
 #define MENU1_SUB2 18
+#define MENU1_SUB3 19 // +=4
+#define MENU1_SUB4 20
 
 #define MENU2_SUB1  33  // +=4
 #define MENU2_SUB2  34
@@ -142,6 +144,8 @@ typedef  unsigned long long uint64
 
 #define MENU3_SUB1  49 // +=4
 #define MENU3_SUB2  50
+#define MENU3_SUB3  51 // +=4
+#define MENU3_SUB4  52
 
 #define MENU4_SUB1 65
 #define MENU4_SUB2 66

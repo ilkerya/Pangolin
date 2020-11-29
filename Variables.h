@@ -113,8 +113,8 @@ byte SampleTime = TASK_2SEC; // 250msec 1 // 500 2 // 1Sec 4 // 2sec 8 // 5sec 1
 
 struct
 {
-  bool LogStatus;  // log on or off
-  bool LogStatusInit; // log on  init case
+  bool LogEnable;  // log on or off  eski LogStatus
+  bool LogBootInit; // log on  init case  eski LogStatusInit
   bool Pause;  // At SD Problem Try Again
   unsigned int PauseTimer;
   unsigned int PauseCount;  

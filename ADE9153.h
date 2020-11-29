@@ -58,20 +58,19 @@ void readandwrite()
   ade9153A.ReadTemperature(&tempVal);
 
   Values.Current = rmsVals.CurrentRMSValue/1000;
-  if(Values.Current < 0.00) Values.Current = 0.00;
+ // if(Values.Current < 0.00) Values.Current = 0.00;
   
-  Serial.print("RMS Current:\t");        
-  Serial.print(Values.Current); 
-  Serial.println(" A");
+  Serial.print("RMS Current:\t");//Serial.print(Values.Current); Serial.print(" A         ");
+  Serial.print(rmsVals.CurrentRMSValue/1000); Serial.println(" A");
 
   Values.Voltage = rmsVals.VoltageRMSValue/1000;
   
-  Serial.print("RMS Voltage:\t");        
-  Serial.print(Values.Voltage);
-  Serial.println(" V");
+  Serial.print("RMS Voltage:\t");   //     Serial.print(Values.Voltage);Serial.println(" V      ");
+  Serial.print(rmsVals.VoltageRMSValue/1000); Serial.println(" V");
+  
 
   Values.ActivePower = powerVals.ActivePowerValue/1000;
-  if(Values.ActivePower < 0.00) Values.ActivePower = 0.00;
+//  if(Values.ActivePower < 0.00) Values.ActivePower = 0.00;
   
   Serial.print("Active Power:\t");        
   Serial.print(Values.ActivePower);

@@ -67,9 +67,7 @@ void Common_Loop(){
     deBugString = "TmpHmSn3_2";
 #endif
 
-#ifdef AD9153_PROTOTYPE
-        AD_Loop();
-#endif
+
 
 
 #ifdef  BAR_PRES_SENSOR_EXISTS
@@ -87,7 +85,7 @@ void Common_Loop(){
 
     if (SampleTime == TASK_1SEC) Log_Data_Write_SD();
 
-     if((Menu == MENU5_SUB7)||(Menu == MENU2_SUB8) ){
+     if((Menu == MENU5_SUB7)||(Menu == MENU2_SUB8)||(Menu == MENU3_SUB3) ||(Menu == MENU3_SUB4)||(Menu == MENU1_SUB3)||(Menu == MENU1_SUB4) ){
       Display.MenuTimeout++;
       if(Display.MenuTimeout > 4){
         Display.MenuTimeout = 0;
@@ -118,7 +116,9 @@ void Common_Loop(){
       if(SDCard.PauseTimer){
          SDCard.PauseTimer--;    
       }
-
+    #ifdef AD9153_PROTOTYPE
+            AD_Loop();
+    #endif
   }
   if (LoopTask_5Sec) {
     LoopTask_5Sec = OFF;
@@ -314,10 +314,10 @@ void MicroInit() {
   EEDisplaySleepRead();
   EEReadLog();
   
-  SDCard.LogStatusInit = 0;  // put the header of the csv file
+  SDCard.LogBootInit = 0;  // put the header of the csv file
 
-  Serial.print("SDCard.LogStatus: ");
-  Serial.print(SDCard.LogStatus);
+  Serial.print("SDCard.LogEnable: ");
+  Serial.print(SDCard.LogEnable);
   Serial.print("    SampleTime: ");
   Serial.println(SampleTime);
   Serial.print("    DisplaySleep: ");

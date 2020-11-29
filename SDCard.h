@@ -84,19 +84,19 @@ void ReadConfigFile(){
 
 
 void SD_CardLogTask(){
-  /*
-  if(!SDCard.LogStatus){ // log of 
-      SDCard.LogStatusInit = 0; // In order to start with the header next time
+  
+  if(!SDCard.LogEnable){ // log on of  from menu
+      SDCard.LogBootInit = 0; // In order to start with the header next time
       return;
   }
-*/
+
     if(SDCard.PauseTimer){  
-      return;
+      return;   // sd card reread trial timer 
     }
 
   
-    if(!SDCard.LogStatusInit){
-      SDCard.LogStatusInit = 1;
+    if(SDCard.LogBootInit == OFF){
+      SDCard.LogBootInit = ON;
       // put header + data           
          SD_Card_Info();
          SD_Card_Init();            
@@ -215,11 +215,7 @@ void SD_Card_Init(){
   // see if the card is present and can be initialized:
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
-    // don't do anything more:
-    //while (1);
       SDCard.Status = SD_NOT_Present;
-     // SDCard.LogStatus = OFF; // stop logging
-
       switch(SDCard.PauseCount){
           case 0: SDCard.PauseTimer = 10;SDCard.PauseCount++;
           break;
@@ -260,7 +256,7 @@ void SD_Card_Init(){
       }
       DispEnable(ON,(60-SDCard.PauseTimer));
       //SDCard.PauseTimer = 15;
-      SDCard.LogStatusInit = OFF;
+      SDCard.LogBootInit = OFF;
       
   }
   else

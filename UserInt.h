@@ -291,10 +291,9 @@ void UpdateSD_LogTime(){
       return;     
   }
   
-    if(SDCard.Status != SD_NOT_Present)SDCard_or_File();           
-    else Display_Line2 = "SD Error    ";
-    Display_Line2 += "   "; // 3
-    //  String DispSample="";
+    if(SDCard.Status != SD_NOT_Present){
+      SDCard_or_File();           
+      Display_Line2 += "   "; // 3    
       switch(SampleTime){
        case TASK_500MSEC:Display_Line2 += "0.5Sec"; //5 
           break;        
@@ -310,5 +309,8 @@ void UpdateSD_LogTime(){
           break;            
         case TASK_60SEC :Display_Line2 += " 60Sec";
           break;     
-      }  
+      }     
+    }
+    else Display_Line2 = "SD Error             ";
+
 }

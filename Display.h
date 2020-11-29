@@ -282,17 +282,27 @@ String Disp_MENU_NULL_ESC = "     ESC";
 String Disp_MENU1 =     "LOG START & STOP MENU";
 String Disp_MENU2 =     "LOG SAMPLE TIME MENU ";
 String Disp_MENU3 =     "DISPLAY STANDBYE MENU";
-
 String Disp_MENU4 =     "INFORMATION MENU     ";
-//String Disp_MENU4 =     "FW: " + FW_Version;  // fw version compile time 
 String Disp_MENU5 =     "DATE & TIME ADJ. MENU";
+
 String Disp_MENU5_SUB7= "Date & Time Updated !"; 
 
-String Disp_MENU1_SUB1= "START LOG? If Yes ENT"; 
-String Disp_MENU1_SUB2= "STOP LOG? If Yes ENT ";  
-String Disp_MENU3_SUB1= "STNDBY Enb?If Yes ENT"; 
-String Disp_MENU3_SUB2= "STNDBY Dis?If Yes ENT";  
+//String Disp_MENU1_SUB1= "START LOG? If Yes ENT"; 
+//String Disp_MENU1_SUB2= "STOP LOG? If Yes ENT ";
 
+
+String Disp_MENU1_SUBMAIN= "LOG "; 
+String Disp_MENU1_SUB1= "START"; 
+String Disp_MENU1_SUB2= "STOP ";
+String Disp_MENU1_SUB3= "Started !"; 
+String Disp_MENU1_SUB4= "Stopped !";
+
+String Disp_MENU3_SUBMAIN= "STANDBYE ";  
+String Disp_MENU3_SUB1= "Enable "; 
+String Disp_MENU3_SUB2= "Disable";  
+String Disp_MENU3_SUB3= "Updated! On";
+String Disp_MENU3_SUB4= "Updated! Off";
+  
 String Disp_MENU2_SUB= "Enter -> ";  //9
 String Disp_MENU2_SUB1= " 0.5 Sec    "; //12
 String Disp_MENU2_SUB2= " 1 Sec      "; //12
@@ -336,24 +346,109 @@ void UpdateDisplayMenu(void){
                      Display_Line8 += Disp_MENU_NULL_ESC;
                       
       break;
-    case MENU1 :  
-    Display_Line8 = Disp_MENU1;
+    case MENU1 :  Display_Line8 = Disp_MENU1;
       break;
-    case MENU2 :   
-    Display_Line8 = Disp_MENU2;
+     case MENU1_SUB1 :    Display_Line8 = Disp_MENU1_SUBMAIN + Disp_MENU1_SUB1;
+        if(DisplayFlash() == 0){     
+          Display_Line8[4] = ' ';
+          Display_Line8[5] = ' ';
+          Display_Line8[6] = ' ';
+          Display_Line8[7] = ' '; 
+          Display_Line8[8] = ' ';        
+        } 
       break;
-    case MENU3 :   
-    Display_Line8 = Disp_MENU3;
+    case MENU1_SUB2 :     Display_Line8 = Disp_MENU1_SUBMAIN + Disp_MENU1_SUB2;
+           if(DisplayFlash() == 0){     
+          Display_Line8[4] = ' ';
+          Display_Line8[5] = ' ';
+          Display_Line8[6] = ' ';
+          Display_Line8[7] = ' '; 
+          Display_Line8[8] = ' '; 
+        }  
       break;
-    case MENU4 :   
-        Display_Line8 = Disp_MENU4; 
+    case MENU1_SUB3 : Display_Line8 = Disp_MENU1_SUBMAIN + Disp_MENU1_SUB3;
+
+      break;
+    case MENU1_SUB4 : Display_Line8 = Disp_MENU1_SUBMAIN + Disp_MENU1_SUB4;    
+      break;
+
+           
+    case MENU2 :   Display_Line8 = Disp_MENU2;
+      break;
+    case MENU2_SUB1 : Display_Line8 = Disp_MENU2_SUB +Disp_MENU2_SUB1;
+          if(DisplayFlash() == OFF){     
+              Display_Line8[10] = ' ';
+              Display_Line8[11] = ' '; 
+              Display_Line8[12] = ' '; 
+        }      
+      break;
+    case MENU2_SUB2 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB2; 
+              if(DisplayFlash() == OFF)Display_Line8[10] = ' ';        
+      break;
+    case MENU2_SUB3 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB3;
+             if(DisplayFlash() == OFF)Display_Line8[10] = ' ';
+      break;
+    case MENU2_SUB4 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB4;
+             if(DisplayFlash() == OFF)Display_Line8[10] = ' ';
+      break;
+    case MENU2_SUB5 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB5;
+              if(DisplayFlash() == OFF){     
+                Display_Line8[10] = ' ';
+                Display_Line8[11] = ' ';        
+            }    
+      break;
+    case MENU2_SUB6 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB6;
+              if(DisplayFlash() == OFF){     
+                Display_Line8[10] = ' ';
+                Display_Line8[11] = ' ';        
+            }     
+      break;
+    case MENU2_SUB7 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB7; 
+              if(DisplayFlash() == OFF){     
+                Display_Line8[10] = ' ';
+                Display_Line8[11] = ' ';        
+            }     
+      break;
+    case MENU2_SUB8 :Display_Line8 = Disp_MENU2_SUB8;
+        break;   
+    case MENU3 :   Display_Line8 = Disp_MENU3;
+      break;
+    case MENU3_SUB1 : Display_Line8 = Disp_MENU3_SUBMAIN + Disp_MENU3_SUB1;
+              if(DisplayFlash() == OFF){     
+              Display_Line8[9] = ' '; 
+              Display_Line8[10] = ' ';
+               Display_Line8[11] = ' ';
+              Display_Line8[12] = ' '; 
+              Display_Line8[13] = ' '; 
+              Display_Line8[14] = ' '; 
+               Display_Line8[15] = ' ';               
+        }  
+      break;
+    case MENU3_SUB2 :  Display_Line8 = Disp_MENU3_SUBMAIN + Disp_MENU3_SUB2;
+         if(DisplayFlash() == OFF){              
+              Display_Line8[9] = ' '; 
+              Display_Line8[10] = ' ';
+               Display_Line8[11] = ' ';
+              Display_Line8[12] = ' '; 
+              Display_Line8[13] = ' '; 
+              Display_Line8[14] = ' '; 
+               Display_Line8[15] = ' ';                            
+        }
+              break;  
+       case MENU3_SUB3 :Display_Line8 = Disp_MENU3_SUBMAIN + Disp_MENU3_SUB3;
+        break;  
+       case MENU3_SUB4 :Display_Line8 = Disp_MENU3_SUBMAIN + Disp_MENU3_SUB4;
+        break;
+      
+    case MENU4 :   Display_Line8 = Disp_MENU4; 
       break;
     case MENU4_SUB1 :  
             Display_Line8 = "Fw:  " + FW_Version;  // fw version compile time 21- 14 = 7 
       break;  
     case MENU4_SUB2 :   
           Display_Line8 = "Dev Id: " + EE_Id_EString;  // fw version compile time
-      break;    
+      break;
+          
     case MENU5 :   Display_Line8 = Disp_MENU5;
       break;
     case MENU5_SUB1 :UpddateDateTimeBuffer();
@@ -400,10 +495,8 @@ void UpdateDisplayMenu(void){
         break; 
  
    
-    case MENU1_SUB1 :Display_Line8 = Disp_MENU1_SUB1;
-      break;
-    case MENU1_SUB2 : Display_Line8 = Disp_MENU1_SUB2;
-      break;
+
+      
 /*      
     case MENU2_SUB1 : Display_Line8 = Disp_MENU2_SUB;Display_Line8 += Disp_MENU2_SUB1;   
       break;
@@ -420,47 +513,11 @@ void UpdateDisplayMenu(void){
     case MENU2_SUB7 : Display_Line8 = Disp_MENU2_SUB; Display_Line8 += Disp_MENU2_SUB7; 
       break;
   */
-    case MENU2_SUB1 : Display_Line8 = Disp_MENU2_SUB +Disp_MENU2_SUB1;
-          if(DisplayFlash() == OFF){     
-              Display_Line8[10] = ' ';
-              Display_Line8[11] = ' '; 
-              Display_Line8[12] = ' '; 
-        }      
-      break;
-    case MENU2_SUB2 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB2; 
-              if(DisplayFlash() == OFF)Display_Line8[10] = ' ';        
-      break;
-    case MENU2_SUB3 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB3;
-             if(DisplayFlash() == OFF)Display_Line8[10] = ' ';
-      break;
-    case MENU2_SUB4 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB4;
-             if(DisplayFlash() == OFF)Display_Line8[10] = ' ';
-      break;
-    case MENU2_SUB5 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB5;
-              if(DisplayFlash() == OFF){     
-                Display_Line8[10] = ' ';
-                Display_Line8[11] = ' ';        
-            }    
-      break;
-    case MENU2_SUB6 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB6;
-              if(DisplayFlash() == OFF){     
-                Display_Line8[10] = ' ';
-                Display_Line8[11] = ' ';        
-            }     
-      break;
-    case MENU2_SUB7 : Display_Line8 = Disp_MENU2_SUB + Disp_MENU2_SUB7; 
-              if(DisplayFlash() == OFF){     
-                Display_Line8[10] = ' ';
-                Display_Line8[11] = ' ';        
-            }     
-      break;
-    case MENU2_SUB8 :Display_Line8 = Disp_MENU2_SUB8;
-        break; 
+
       
-    case MENU3_SUB1 : Display_Line8 = Disp_MENU3_SUB1;
-      break;
-    case MENU3_SUB2 :  Display_Line8 = Disp_MENU3_SUB2;
-      break;
+
+            
+
     default: 
     break;
   }

@@ -60,12 +60,15 @@ void DispEnable(bool Enable, byte Timer) {
 }
 
 void LogEnable(bool Enable) {
-  /*
-    if(Enable == ON)LogPause = ON;
-    else{
-    LogPause = OFF;SD_KartStop = OFF;// once to get sd kart info only
+  
+    if(Enable == ON){
+      SDCard.LogEnable = ON;
+      EESetResetLog(ON);
     }
-  */
+    if(Enable == OFF){
+      SDCard.LogEnable = OFF;
+      EESetResetLog(OFF);
+    } 
 }
 
 
@@ -116,21 +119,21 @@ void EEReadLog(void) {
    #ifdef ARDUINO_MEGA // 8 bit AVR
     byte Mode = EEPROM.read(ADDRES_LOG);// OFF
     switch (Mode) {
-      case TASK_500MSEC: SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_500MSEC: SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_1SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_1SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_2SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_2SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_5SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_5SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_10SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_10SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_20SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_20SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      case TASK_60SEC : SDCard.LogStatus = ON; SampleTime =  Mode;
+      case TASK_60SEC : SDCard.LogEnable = ON; SampleTime =  Mode;
       break;
-      default: SDCard.LogStatus = OFF; SampleTime =  TASK_2SEC;
+      default: SDCard.LogEnable = OFF; SampleTime =  TASK_2SEC;
       break;
     }
    #endif
@@ -272,7 +275,10 @@ void DownMenuKey(void) {
       break;
     case MENU1_SUB2 : Menu =  MENU1_SUB1;//
       break;
-
+    case MENU1_SUB3 :       
+      break;
+    case MENU1_SUB4 :     
+      break;
     case MENU2_SUB1 :  Menu =  MENU2_SUB7;//
       break;
     case MENU2_SUB2 :  Menu =  MENU2_SUB1;//
@@ -287,7 +293,7 @@ void DownMenuKey(void) {
       break;
     case MENU2_SUB7 :  Menu =  MENU2_SUB6;//
       break;
-      //   case MENU2_SUB8 :  Menu =  MENU2_SUB7;//
+   case MENU2_SUB8 :  
       break;
 
 
@@ -305,11 +311,14 @@ void DownMenuKey(void) {
       break;
      case MENU5_SUB7 :      
       break;
-       case MENU2_SUB8 :  
-      break;
+
     case MENU3_SUB1 :  Menu =  MENU3_SUB2;//
       break;
     case MENU3_SUB2 :  Menu =  MENU3_SUB1;//
+      break;
+    case MENU3_SUB3 : 
+      break;
+    case MENU3_SUB4 : 
       break;
 
 
@@ -348,7 +357,10 @@ void UpMenuKey(void) {
       break;
     case MENU1_SUB2 : Menu =  MENU1_SUB1;//
       break;
-
+    case MENU1_SUB3 :       
+      break;
+    case MENU1_SUB4 :     
+      break;
     case MENU2_SUB1 :  Menu =  MENU2_SUB2;//
       break;
     case MENU2_SUB2 :  Menu =  MENU2_SUB3;//
@@ -369,6 +381,10 @@ void UpMenuKey(void) {
     case MENU3_SUB1 :  Menu =  MENU3_SUB2;//
       break;
     case MENU3_SUB2 :  Menu =  MENU3_SUB1;//
+      break;
+    case MENU3_SUB3 : 
+      break;
+    case MENU3_SUB4 : 
       break;
 
 
@@ -439,6 +455,10 @@ void EscMenuKey(void) {
       break;
     case MENU1_SUB2 : Menu =  MENU1;//
       break;
+    case MENU1_SUB3 :       
+      break;
+    case MENU1_SUB4 :     
+      break;
 
     case MENU2_SUB1 :  Menu =  MENU2;//
       break;
@@ -461,6 +481,11 @@ void EscMenuKey(void) {
       break;
     case MENU3_SUB2 :  Menu =  MENU3;//
       break;
+    case MENU3_SUB3 : 
+      break;
+    case MENU3_SUB4 : 
+      break;
+
 
 
     case MENU5_SUB1 :  Menu = MENU5;
@@ -488,6 +513,91 @@ void EnterMenuKey(void) {
   switch (Menu) {
     case MENU_NULL : Menu = MENU1;
           break;
+
+          
+    case MENU1 : //Menu = MENU1MIN; // go to sub menu  // sd kart log on
+      if (SDCard.LogEnable == ON) Menu = MENU1_SUB2; //already logging
+      else  Menu = MENU1_SUB1;
+      break;
+
+      break;
+
+    case MENU1_SUB1 :  LogEnable(ON); //SDCard.LogEnable = ON; EESetResetLog(ON);
+      Menu =  MENU1_SUB3;//MENU1
+      break;
+    case MENU1_SUB2 : LogEnable(OFF);// SDCard.LogEnable = OFF; EESetResetLog(OFF); // default
+      Menu =  MENU1_SUB4;//MENU1
+      break;
+    case MENU1_SUB3 :  
+      
+      break;
+    case MENU1_SUB4 : 
+      
+      break;
+
+
+     case MENU2 : // Menu = MENU2MIN; // call the right menu according to current one
+      switch (SampleTime) {
+        case TASK_500MSEC: Menu = MENU2_SUB1;
+          break;
+        case TASK_1SEC : Menu = MENU2_SUB2;
+          break;
+        case TASK_2SEC : Menu = MENU2_SUB3;
+          break;
+        case TASK_5SEC : Menu = MENU2_SUB4;
+          break;
+        case TASK_10SEC : Menu = MENU2_SUB5;
+          break;
+        case TASK_20SEC : Menu = MENU2_SUB6;
+          break;
+        case TASK_60SEC : Menu = MENU2_SUB7;
+          break;
+        default:
+          break;
+      }
+      break;   
+    case MENU2_SUB1 :  SampleTime = TASK_500MSEC ; EESetSampleTimeLog(TASK_500MSEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB2 : SampleTime = TASK_1SEC; EESetSampleTimeLog(TASK_1SEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB3 :  SampleTime = TASK_2SEC; EESetSampleTimeLog(TASK_2SEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB4 : SampleTime = TASK_5SEC; EESetSampleTimeLog(TASK_5SEC); // default
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB5 :  SampleTime = TASK_10SEC; EESetSampleTimeLog(TASK_10SEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB6 :  SampleTime = TASK_20SEC; EESetSampleTimeLog(TASK_20SEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB7 :  SampleTime = TASK_60SEC; EESetSampleTimeLog(TASK_60SEC);
+      Menu =  MENU2_SUB8;//MENU2;//
+      break;
+    case MENU2_SUB8 :  
+      
+      break;
+      
+      case MENU3 : // Menu = MENU3MIN;
+      if (DisplaySleepEnable == ON) Menu = MENU3_SUB2; //already logging
+      else  Menu = MENU3_SUB1;
+      break;    
+    case MENU3_SUB1 :  DispEnable(ON,40);EEDisplaySleep(ON);
+      Menu =  MENU3_SUB3;//MENU3
+      break;
+    case MENU3_SUB2 :  DispEnable(OFF,0);EEDisplaySleep(OFF);
+      Menu =  MENU3_SUB4;//MENU3
+      break;
+    case MENU3_SUB3 :  
+      
+      break;
+    case MENU3_SUB4 :  
+      
+      break;
+      
     case MENU4 :   Menu = MENU4_SUB1;  
        
       break;
@@ -514,74 +624,6 @@ void EnterMenuKey(void) {
           DateTimeBuf.RTC_Update = ON;    
       break;
      case MENU5_SUB7 :      
-      break;
-          
-    case MENU1 : //Menu = MENU1MIN; // go to sub menu  // sd kart log on
-      if (SDCard.LogStatus == ON) Menu = MENU1_SUB2; //already logging
-      else  Menu = MENU1_SUB1;
-      break;
-    case MENU2 : // Menu = MENU2MIN; // call the right menu according to current one
-      switch (SampleTime) {
-        case TASK_500MSEC: Menu = MENU2_SUB1;
-          break;
-        case TASK_1SEC : Menu = MENU2_SUB2;
-          break;
-        case TASK_2SEC : Menu = MENU2_SUB3;
-          break;
-        case TASK_5SEC : Menu = MENU2_SUB4;
-          break;
-        case TASK_10SEC : Menu = MENU2_SUB5;
-          break;
-        case TASK_20SEC : Menu = MENU2_SUB6;
-          break;
-        case TASK_60SEC : Menu = MENU2_SUB7;
-          break;
-        default:
-          break;
-      }
-      break;
-    case MENU3 : // Menu = MENU3MIN;
-      if (DisplaySleepEnable == ON) Menu = MENU3_SUB2; //already logging
-      else  Menu = MENU3_SUB1;
-      break;
-    case MENU1_SUB1 :  LogEnable(ON); SDCard.LogStatus = ON; EESetResetLog(ON);
-      Menu =  MENU_NULL;//MENU1
-      break;
-    case MENU1_SUB2 : LogEnable(OFF); SDCard.LogStatus = OFF; EESetResetLog(OFF); // default
-      Menu =  MENU_NULL;//MENU1
-      break;
-
-      
-    case MENU2_SUB1 :  SampleTime = TASK_500MSEC ; EESetSampleTimeLog(TASK_500MSEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB2 : SampleTime = TASK_1SEC; EESetSampleTimeLog(TASK_1SEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB3 :  SampleTime = TASK_2SEC; EESetSampleTimeLog(TASK_2SEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB4 : SampleTime = TASK_5SEC; EESetSampleTimeLog(TASK_5SEC); // default
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB5 :  SampleTime = TASK_10SEC; EESetSampleTimeLog(TASK_10SEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB6 :  SampleTime = TASK_20SEC; EESetSampleTimeLog(TASK_20SEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB7 :  SampleTime = TASK_60SEC; EESetSampleTimeLog(TASK_60SEC);
-      Menu =  MENU2_SUB8;//MENU2;//
-      break;
-    case MENU2_SUB8 :  
-      
-      break;
-      
-    case MENU3_SUB1 :  DispEnable(ON,40);EEDisplaySleep(ON);
-      Menu =  MENU_NULL;//MENU3
-      break;
-    case MENU3_SUB2 :  DispEnable(OFF,0);EEDisplaySleep(OFF);
-      Menu =  MENU_NULL;//MENU3
       break;
  
     default: Menu = MENU_NULL; 
