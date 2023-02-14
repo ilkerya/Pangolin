@@ -248,10 +248,9 @@ git add .
 git commit -m "Add existing file"
 // For Common git
 git push https://github.com/ilkerya/Pangolin master
-// For Electrolux git
-git push  http://git.int.electrolux.com/ilkerya/Phoenix_Pangolin.git master
+
 https://help.github.com/articles/fetching-a-remote/
-http://git.int.electrolux.com/ilkerya/Phoenix_Mobile.git
+
 
 In case in the first push gives error use below command
 git remote add origin remote repository URL
